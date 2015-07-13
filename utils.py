@@ -56,13 +56,12 @@ def biforcating_sequences(seq, levels=4, av_rate=0.001,
 def flatten(lst):
     for item in lst:
         if isinstance(item, list) or isinstance(item, tuple):
-            yield from flatten(item)
+            for x in flatten(item):
+                yield x
         else:
             yield item
 
 
-def seqlist_to_mulitfasta(seqlist):
-    lines = []
+def print_multifasta(seqlist, file=sys.stdout):
     for i, seq in enumerate(seqlist):
-        lines.append(seq_to_fasta_rec(seq, str(i + 1)))
-    return '\n'.join(lines)
+        print(seq_to_fasta_rec(seq, str(i + 1)), file=file)
