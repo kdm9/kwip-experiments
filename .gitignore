@@ -1,3 +1,8 @@
 *.swp
 *.pyc
 *.fa
+
+data/
+
+.R*
+.ipynb_checkpoints
