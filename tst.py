@@ -1,5 +1,6 @@
 from utils import *
 import sys
+import skbio
 g = make_rand_genome(mbp=100)
 print("made genome", file=sys.stderr)
 b = biforcating_sequences(g, levels=4, av_rate=0.0001, sd_rate=0.00001)

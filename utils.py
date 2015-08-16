@@ -53,6 +53,7 @@ def biforcating_sequences(seq, levels=4, av_rate=0.001,
     else:
         return (a, b)
 
+
 def flatten(lst):
     for item in lst:
         if isinstance(item, list) or isinstance(item, tuple):
