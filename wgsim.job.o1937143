@@ -1,0 +1,13 @@
+======================================================================================
+			Resource Usage on 2015-08-17 17:08:02.252428:
+	JobId: 1937143.r-man2  
+	Project: xe2 
+	Exit Status: 16 (Linux Signal 16)
+	Service Units: 0.41
+	NCPUs Requested: 16				NCPUs Used: 16
+							CPU Time Used: 00:20:45
+	Memory Requested: 1gb 				Memory Used: 1gb
+							Vmem Used: 2gb
+	Walltime requested: 00:20:00 			Walltime Used: 00:01:32
+	jobfs request: 262144mb				jobfs used: 1mb
+======================================================================================

@@ -2,7 +2,7 @@
 *.pyc
 *.fa
 
-data/
+data
 
 .R*
 .ipynb_checkpoints
