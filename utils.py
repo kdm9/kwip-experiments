@@ -71,7 +71,7 @@ def print_multifasta(seqlist, file=sys.stdout):
 
 
 
-def wgsim(N, ref, ilfq, rate=0.0000001, quiet=True):
+def wgsim(N, ref, ilfq, rate=0.0000001, err_rate=0.001, quiet=True):
     if N <= 10000000:
         tmp='/dev/shm'
     else:
@@ -80,8 +80,8 @@ def wgsim(N, ref, ilfq, rate=0.0000001, quiet=True):
     r1_file = '{tmp}/{r}_r1.fq'.format(tmp=tmp, r=rand)
     r2_file = '{tmp}/{r}_r2.fq'.format(tmp=tmp, r=rand)
     try:
-        wgs = "wgsim -S {rand} -1 101 -2 101 -r {rate:.12f} -N {N} {ref} {r1} {r2}".format(
-                rand=rand, N=N, ref=ref, rate=rate, r1=r1_file, r2=r2_file)
+        wgs = "wgsim -S {rand} -e {err} -1 101 -2 101 -r {rate:.12f} -N {N} {ref} {r1} {r2}".format(
+                rand=rand, err=err_rate, N=N, ref=ref, rate=rate, r1=r1_file, r2=r2_file)
         if not quiet:
             print(wgs)
         p = subprocess.Popen(wgs, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -114,3 +114,11 @@ def wgsim(N, ref, ilfq, rate=0.0000001, quiet=True):
             os.remove(r2_file)
         except:
             pass
+
+def run_cmd(cmd, quiet=True):
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p.stdout:
+        if quiet:
+            continue
+        print(line.decode('utf-8'), end='')
+    return p.wait()
