@@ -70,6 +70,13 @@ def print_multifasta(seqlist, file=sys.stdout):
         print(seq_to_fasta_rec(seq, str(i + 1)), file=file)
 
 
+def run_cmd(cmd, quiet=True):
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p.stdout:
+        if quiet:
+            continue
+        print(line.decode('utf-8'), end='')
+    return p.wait()
 
 def wgsim(N, ref, ilfq, rate=0.0000001, err_rate=0.001, quiet=True):
     if N <= 10000000:
@@ -84,29 +91,28 @@ def wgsim(N, ref, ilfq, rate=0.0000001, err_rate=0.001, quiet=True):
                 rand=rand, err=err_rate, N=N, ref=ref, rate=rate, r1=r1_file, r2=r2_file)
         if not quiet:
             print(wgs)
-        p = subprocess.Popen(wgs, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        for line in p.stdout:
-            if quiet:
-                continue
-            print(line.decode('ascii'), end='')
-        p.wait()
-        with open(ilfq, 'w') as il_fh:
-            r1 = []
-            r2 = []
-            with open(r1_file) as r1_fh, open(r2_file) as r2_fh:
-                for i, (l1, l2) in enumerate(zip(r1_fh, r2_fh)):
-                    if i % 4 == 0:
-                        for line in r1 + r2:
-                            il_fh.write(line)
-                        r1 = []
-                        r2 = []
-                    r1.append(l1)
-                    r2.append(l2)
-            #r1_fh = skbio.read(r1_file, format='fastq', variant='sanger')
-            #r2_fh = skbio.read(r2_file, format='fastq', variant='sanger')
-            #for r1, r2 in zip(r1_fh, r2_fh):
-            #    skbio.write(r1, format='fastq', variant='sanger', into=il_fh)
-            #    skbio.write(r2, format='fastq', variant='sanger', into=il_fh)
+        run_cmd(wgs)
+        pairs = 'pairs join {r1} {r2} | pigz > {ilfq}'.format(r1=r1_file, r2=r2_file, ilfq=ilfq)
+        run_cmd(pairs, False)
+        #with open(ilfq, 'w') as il_fh:
+        #    r1 = []
+        #    r2 = []
+        #    with open(r1_file) as r1_fh, open(r2_file) as r2_fh:
+        #        for i, (l1, l2) in enumerate(zip(r1_fh, r2_fh)):
+        #            if i % 4 == 0:
+        #                for line in r1:
+        #                    il_fh.write(line)
+        #                for line in r2:
+        #                    il_fh.write(line)
+        #                r1 = []
+        #                r2 = []
+        #            r1.append(l1)
+        #            r2.append(l2)
+        #    #r1_fh = skbio.read(r1_file, format='fastq', variant='sanger')
+        #    #r2_fh = skbio.read(r2_file, format='fastq', variant='sanger')
+        #    #for r1, r2 in zip(r1_fh, r2_fh):
+        #    #    skbio.write(r1, format='fastq', variant='sanger', into=il_fh)
+        #    #    skbio.write(r2, format='fastq', variant='sanger', into=il_fh)
     finally:
         # nuke the temp files
         try:
@@ -115,10 +121,3 @@ def wgsim(N, ref, ilfq, rate=0.0000001, err_rate=0.001, quiet=True):
         except:
             pass
 
-def run_cmd(cmd, quiet=True):
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    for line in p.stdout:
-        if quiet:
-            continue
-        print(line.decode('utf-8'), end='')
-    return p.wait()
