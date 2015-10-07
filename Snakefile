@@ -33,6 +33,7 @@ rule all_genomes:
     shell:
         "seq-gen"
         " -mF84"
+        " -s0.001"
         " -l{params.length}"
         " -z{params.seed}"
         " -oF"
