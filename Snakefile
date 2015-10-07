@@ -144,7 +144,7 @@ rule kwip:
     log:
         "data/log/kwip/{cov}x-{metric}.log"
     threads:
-        4
+        24
     shell:
         "kwip"
         " {params.metric}"
@@ -164,7 +164,7 @@ rule kwip_stats:
     log:
         "data/log/kwip-entvec/{cov}x.log"
     threads:
-        4
+        24
     shell:
         "kwip-entvec"
         " -o {output}"
