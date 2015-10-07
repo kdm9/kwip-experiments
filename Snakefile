@@ -1,7 +1,7 @@
 # Mapping of population name: divergence
 GENOMES = ['A', 'B', 'C', 'D']
 SAMPLES = [str(i) for i in range(1, 5)]
-SAMPLE_SEEDS = {g: {s: str(i ** j) for j, s in enumerate(SAMPLES)}
+SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
 GENOME_SIZE = int(1e6)
 COVERAGES = [1, 2, 5, 10, 50, 100]
@@ -13,11 +13,12 @@ METRICS = ['wip', 'ip']
 rule all:
     input:
         expand("data/genomes/{g}.fasta", g=GENOMES),
-        #"data/aligned_genomes.fasta",
-        expand("data/samples/{genome}-{sample}_{cov}x_il.fastq.gz", genome=GENOMES,
-               sample=SAMPLES, cov=COVERAGES),
+        expand("data/samples/{genome}-{sample}_{cov}x_il.fastq.gz",
+               genome=GENOMES, sample=SAMPLES, cov=COVERAGES),
         expand("data/kwip/{cov}x.stat", cov=COVERAGES),
-        expand("data/kwip/{cov}x-{metric}.{ext}", cov=COVERAGES, metric=METRICS, ext=["dist", "kern"]),
+        expand("data/kwip/{cov}x-{metric}.{ext}", cov=COVERAGES,
+               metric=METRICS, ext=["dist", "kern"]),
+        #"data/aligned_genomes.fasta",
 
 
 rule all_genomes:
@@ -101,7 +102,7 @@ rule ilfq:
     log:
         "data/log/join/{genome}-{sample}_{cov}x.log"
     shell:
-        "interleave-reads.py"
+        "pairs join"
         " {input.r1}"
         " {input.r2}"
         " 2>>{log}"
@@ -115,7 +116,7 @@ rule hash:
     output:
         "data/hashes/{genome}-{sample}_{cov}x.ct.gz"
     params:
-        x='1e9',
+        x='1e8',
         N='1',
         k='20'
     log:
