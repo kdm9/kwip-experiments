@@ -135,8 +135,8 @@ rule hash:
 
 rule kwip:
     input:
-        expand("data/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
-               genome=GENOMES, sample=SAMPLES)
+        sorted(expand("data/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
+               genome=GENOMES, sample=SAMPLES))
     output:
         d="data/kwip/{cov}x-{metric}.dist",
         k="data/kwip/{cov}x-{metric}.kern"
