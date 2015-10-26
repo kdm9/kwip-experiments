@@ -3,8 +3,8 @@ GENOMES = ['A', 'B', 'C', 'D']
 SAMPLES = [str(i) for i in range(1, 5)]
 SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
-GENOME_SIZE = int(1e6)
-COVERAGES = [1, 2, 5, 10, 50, 100]
+GENOME_SIZE = int(1e7)
+COVERAGES = [1, 2, 5, 10, 20, 50]
 READ_NUMS = {cov: int(GENOME_SIZE * cov / 200) for cov in COVERAGES}
 HASH_SIZES = ["1e9",]
 METRICS = ['wip', 'ip']
@@ -84,6 +84,7 @@ rule samples:
     shell:
         "mason_simulator"
         " -ir {input}"
+        " --illumina-prob-mismatch-scale 10.0"
         " --illumina-read-length 101"
         " -o {output.r1}"
         " -or {output.r2}"
