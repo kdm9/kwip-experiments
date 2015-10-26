@@ -84,7 +84,7 @@ rule samples:
     shell:
         "mason_simulator"
         " -ir {input}"
-        " --illumina-prob-mismatch-scale 10.0"
+        " --illumina-prob-mismatch-scale 2.0"
         " --illumina-read-length 101"
         " -o {output.r1}"
         " -or {output.r2}"
