@@ -107,6 +107,12 @@ rule ilfq:
         " {input.r1}"
         " {input.r2}"
         " 2>>{log}"
+        " | sickle se "
+        " -f /dev/stdin"
+        " -t sanger"
+        " -o /dev/stdout"
+        " -n"
+        " 2>>{log}"
         " | gzip > {output}"
         " 2>>{log}"
 
