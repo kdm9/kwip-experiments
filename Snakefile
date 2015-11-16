@@ -7,7 +7,7 @@ GENOME_SIZE = int(1e7)
 COVERAGES = [1, 2, 5, 10, 20, 50]
 SCALES = ['0.001', '0.01', '0.1']
 READ_NUMS = {cov: int(GENOME_SIZE * cov / 200) for cov in COVERAGES}
-HASH_SIZES = ["1e9",]
+HASH_SIZE = "1e9"
 METRICS = ['wip', 'ip']
 
 
@@ -125,9 +125,9 @@ rule hash:
     output:
         "data/hashes/{genome}-{scale}-{sample}_{cov}x.ct.gz"
     params:
-        x='1e8',
+        x=HASH_SIZE,
         N='1',
-        k='20'
+        k='20',
     log:
         "data/log/hashes/{genome}-{scale}-{sample}_{cov}x.log"
     shell:
