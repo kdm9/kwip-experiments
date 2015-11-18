@@ -1,3 +1,4 @@
 *.swp
 .snakemake/
+.ipynb_checkpoints/
 data
