@@ -4,7 +4,7 @@ SAMPLES = [str(i) for i in range(1, 5)]
 SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
 GENOME_SIZE = int(1e7)
-COVERAGES = [1, 2, 5, 10, 20, 50]
+COVERAGES = [1, 5, 10, 20,]
 SCALES = ['0.001', '0.01', '0.1']
 READ_NUMS = {cov: int(GENOME_SIZE * cov / 200) for cov in COVERAGES}
 HASH_SIZE = "4e8"
@@ -76,8 +76,8 @@ rule samples:
     input:
         "data/genomes-{scale}/{genome}.fasta",
     output:
-        r1=temp("/dev/shm/{genome}-{scale}-{sample}_{cov}x_R1.fastq"),
-        r2=temp("/dev/shm/{genome}-{scale}-{sample}_{cov}x_R2.fastq")
+        r1=temp("data/tmp/{genome}-{scale}-{sample}_{cov}x_R1.fastq"),
+        r2=temp("data/tmp/{genome}-{scale}-{sample}_{cov}x_R2.fastq")
     params:
         seed=lambda w: SAMPLE_SEEDS[w.genome][w.sample],
         rn=lambda w: str(READ_NUMS[int(w.cov)])
@@ -96,8 +96,8 @@ rule samples:
 
 rule ilfq:
     input:
-        r1="/dev/shm/{genome}-{scale}-{sample}_{cov}x_R1.fastq",
-        r2="/dev/shm/{genome}-{scale}-{sample}_{cov}x_R2.fastq"
+        r1="data/tmp/{genome}-{scale}-{sample}_{cov}x_R1.fastq",
+        r2="data/tmp/{genome}-{scale}-{sample}_{cov}x_R2.fastq"
     priority:
         10
     output:
