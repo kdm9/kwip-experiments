@@ -7,14 +7,14 @@ GENOMES = ['A', 'B', 'C', 'D']
 SAMPLES = ['1', '2', '3', '4']
 SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
-GENOME_SIZE = 1e7
+GENOME_SIZE = 1e6
 COVERAGES = [1, 2, 5, 10, 20,]
-SCALES = ['0.01',] #['0.001', '0.01', '0.1']
-READ_NUMS = {c: {g: {s: str(max(400, int(GENOME_SIZE * nprand.normal(c, 0.1 * c) / 200)))
+SCALES = ['0.001',] #['0.001', '0.01', '0.1']
+READ_NUMS = {c: {g: {s: str(max(400, int(GENOME_SIZE * nprand.normal(c, 0.5 * c) / 200)))
                         for s in SAMPLES}
                     for g in GENOMES}
                 for c in COVERAGES}
-HASH_SIZE = "1e8"
+HASH_SIZE = "5e7"
 METRICS = ['wip', 'ip']
 
 
