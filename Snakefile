@@ -1,13 +1,20 @@
 # Mapping of population name: divergence
+import numpy as np
+from numpy import random as nprand
+nprand.seed(3112)
+
 GENOMES = ['A', 'B', 'C', 'D']
-SAMPLES = [str(i) for i in range(1, 5)]
+SAMPLES = ['1', '2', '3', '4']
 SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
-GENOME_SIZE = int(1e7)
-COVERAGES = [1, 5, 10, 20,]
-SCALES = ['0.001', '0.01', '0.1']
-READ_NUMS = {cov: int(GENOME_SIZE * cov / 200) for cov in COVERAGES}
-HASH_SIZE = "4e8"
+GENOME_SIZE = 1e7
+COVERAGES = [1, 2, 5, 10, 20,]
+SCALES = ['0.01',] #['0.001', '0.01', '0.1']
+READ_NUMS = {c: {g: {s: str(max(400, int(GENOME_SIZE * nprand.normal(c, 0.1 * c) / 200)))
+                        for s in SAMPLES}
+                    for g in GENOMES}
+                for c in COVERAGES}
+HASH_SIZE = "1e8"
 METRICS = ['wip', 'ip']
 
 
@@ -16,7 +23,7 @@ rule all:
         expand("data/genomes-{s}/{g}.fasta", g=GENOMES, s=SCALES),
         expand("data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz",
                genome=GENOMES, scale=SCALES, sample=SAMPLES, cov=COVERAGES),
-        expand("data/kwip/{cov}x-{scale}.stat", cov=COVERAGES, scale=SCALES),
+#        expand("data/kwip/{cov}x-{scale}.stat", cov=COVERAGES, scale=SCALES),
         expand("data/kwip/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
                scale=SCALES, metric=METRICS, ext=["dist", "kern"]),
 
@@ -80,7 +87,7 @@ rule samples:
         r2=temp("data/tmp/{genome}-{scale}-{sample}_{cov}x_R2.fastq")
     params:
         seed=lambda w: SAMPLE_SEEDS[w.genome][w.sample],
-        rn=lambda w: str(READ_NUMS[int(w.cov)])
+        rn=lambda w: READ_NUMS[int(w.cov)][w.genome][w.sample]
     log:
         "data/log/samples/{genome}-{scale}-{sample}_{cov}x.log"
     shell:
