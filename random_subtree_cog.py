@@ -24,6 +24,7 @@ def iter_trees(treefile):
         for line in tfh:
             yield LoadTree(treestring=line)
 
+
 def scaled_subsample(tree, num, seed=None):
     if seed:
         random.seed(seed)
@@ -35,9 +36,8 @@ def scaled_subsample(tree, num, seed=None):
         "".join(x)
         for x in itertools.product(string.ascii_uppercase, repeat=lablen)
     ]
-
     for i, tip in enumerate(sorted(subtree.iterTips(), key=lambda x: x.Name)):
-        print(i, labels[i], tip.Name)
+        tip.Name = labels[i]
     return subtree.getNewick(with_distances=True)
 
 
@@ -50,7 +50,10 @@ def dawg_tree(newicks):
 def main(tree, n):
     seed = random.random()
     trees = [scaled_subsample(t, n, seed) for t in iter_trees(tree)]
-    with open("data/tree.dawg", 'w') as dfh:
+    with open("data/samples.nwk", 'w') as tfh:
+        for tree in trees:
+            print(tree, file=tfh)
+    with open("data/dawg.tree", 'w') as dfh:
         print(dawg_tree(trees), file=dfh)
 
 
