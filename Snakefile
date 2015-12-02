@@ -1,26 +1,33 @@
 # Mapping of population name: divergence
 import string
+import itertools
+from math import log, ceil
+from snakemake.utils import format as snakefmt
 
 Ne = 2048   # Effective population size
 Npop = 8    # populations
-Nloci = 5   # Chromosomes
+Nloci = 1   # Chromosomes
 N = 48      # number of samples from population
 REPS = 2    # Replicate runs per sample
+M = 0.3     # Migration Rate
 
 
 # Sample names
-SAMPLES = [string.ascii_uppercase[i] for i in range(1, 5)]
+labels = [
+    "".join(x)
+    for x in itertools.product(string.ascii_uppercase, repeat=int(ceil(log(N, 26))))
+]
+SAMPLES = [labels[i] for i in range(N)]
 COVERAGES = [1, 5, 10, 20,]
 
-GENOME_SIZE = int(1e6)
+GENOME_SIZE = int(5e5)
 HASH_SIZE = "5e7"
 METRICS = ['wip', 'ip']
 
 
 rule all:
     input:
-        expand("data/pops/P{psz}-p{np}.nwk", psz=POPSIZES, np=NPOP),
-        expand("data/genomes/N{N}-P{nhap}-p{npop}/", N=Ns, nhap=POPSIZES, npop=NPOP),
+        expand("data/genomes/{g}.fasta", g=SAMPLES),
 
 rule clean:
     shell:
@@ -28,26 +35,21 @@ rule clean:
 
 
 def scrm_args(wc):
-    migration = 0.3
-    nhap = int(wc.nhap)
-    nrep = 10 #int(wc.nrep)
-    npop = int(wc.npop)
-    args = "{:d} {:d} ".format(nhap, nrep)
+    args = "{:d} {:d} ".format(Ne, Nloci)
     args += "-T "
-
-    perpop = int(nhap / npop)
-    pops = " ".join([str(perpop) for _ in range(npop)])
-    args += " -I {:d} {:s} {} ".format(npop, pops, migration)
-
+    perpop = int(Nloci / Npop)
+    pops = " ".join([str(perpop) for _ in range(Npop)])
+    args += " -I {:d} {:s} {} ".format(Npop, pops, M)
     return args
+
 
 rule population:
     output:
-        "data/pops/P{nhap}-p{npop}.nwk"
+        "data/population.nwk"
     params:
         args=scrm_args
     log:
-        "data/log/scrm-P{nhap}-p{npop}.log"
+        "data/log/scrm.log"
     shell:
         "scrm"
         " {params.args}"
@@ -56,59 +58,68 @@ rule population:
         " >{output}"
 
 
-rule sampled_tree:
+rule dawgtree:
     input:
-        "data/pops/P{nhap}-p{npop}.nwk"
+        "data/population.nwk"
     output:
-        "data/samples/N{N}-P{nhap}-p{npop}.nwk"
+        "data/dawg.tree"
     params:
-        N=lambda w: w.N
-    log:
-        "data/log/scrm-P{nhap}-p{npop}.log"
+        N=str(N)
     shell:
-        "python ./random_subtree.py"
+        "scripts/random_subtree_cog.py"
+        " -n {params.N}"
         " {input}"
-        " {params.N}"
-        " 2>{log}"
-        " >{output}"
 
+rule paramfile:
+    output:
+        "data/dawg.params"
+    params:
+        length=str(GENOME_SIZE),
+    run:
+        dawg = """
+        Length = {{{length}, }}
+        Seed = 23
+        TreeScale = 2e-5
+        Model = 'F84'
+        Params = {{4,}}
+        Lambda = 0.1
+        File = 'data/all_genomes.fasta'
+        Format = 'Fasta'
+        GapSingleChar = true
+        GapModel = 'NB'
+        GapParams = {{1, 0.5}}
+        """.format(length=", ".join(map(str, [GENOME_SIZE] * Nloci)))
+        with open(output[0], 'w') as fh:
+            print(dawg, file=fh)
 
 rule all_genomes:
     input:
-        "data/samples/N{N}-P{nhap}-p{npop}.nwk"
+        "data/dawg.params",
+        "data/dawg.tree",
     output:
-        temp("data/merged_genomes-N{N}-P{nhap}-p{npop}.fasta")
-    params:
-        length=str(GENOME_SIZE),
-        seed="23",
-        scale=SCALE,
+        temp("data/all_genomes.fasta")
     log:
-        "data/log/seqgen.log"
+        "data/log/dawg.log"
     shell:
-        "seq-gen"
-        " -mF84"
-        " -s{params.scale}"
-        " -l{params.length}"
-        " -z{params.seed}"
-        " -oF"
+        "dawg"
+        " -c"
         " {input}"
-        " >{output} 2>{log}"
+        " >{log} 2>&1"
 
 
 rule genomes:
     input:
-        "data/merged_genomes-N{N}-P{nhap}-p{npop}.fasta"
+        "data/all_genomes.fasta"
     output:
-        "data/genomes/N{{N}}-P{{nhap}}-p{{npop}}/*.fasta",
-        #expand("data/genomes/N{{N}}-P{{nhap}}-p{{npop}}/{genome}.fasta", genome=GENOMES),
+        expand("data/genomes/{g}.fasta", g=SAMPLES)
     params:
-        dir=lambda w: "data/genomes/N{}-P{}-p{}".format(w.N, w.nhap, w.npop)
+        dir="data/genomes/"
     log:
-        "data/log/splitfa-N{N}-P{nhap}-p{npop}.log"
+        "data/log/splitfa.log"
     shell:
-        "./splitfa.py"
+        "scripts/splitfa.py"
         " {input}"
-        " {params.dir}/"
+        " {params.dir}"
         " >{log} 2>&1"
 
 
