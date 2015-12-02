@@ -12,6 +12,7 @@ USAGE:
     random_subtree [options] <tree>
 
 OPTIONS:
+    -o OUT  Output file.
     -n N    Number of taxa to sample.
 
 Subsamples N taxa from the Newick tree in <tree>, preserving the branch
@@ -47,17 +48,15 @@ def dawg_tree(newicks):
     return "Tree = {\n\t%s,\n}\n" % treestr
 
 
-def main(tree, n):
+def main(tree, n, out):
     seed = random.random()
     trees = [scaled_subsample(t, n, seed) for t in iter_trees(tree)]
-    with open("data/samples.nwk", 'w') as tfh:
+    with open(out, 'w') as tfh:
         for tree in trees:
             print(tree, file=tfh)
-    with open("data/dawg.tree", 'w') as dfh:
-        print(dawg_tree(trees), file=dfh)
 
 
 if __name__ == "__main__":
     import docopt
     opts = docopt.docopt(CLI)
-    main(opts['<tree>'], int(opts['-n']))
+    main(opts['<tree>'], int(opts['-n']), opts['-o'])
