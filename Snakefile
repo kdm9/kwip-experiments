@@ -123,7 +123,7 @@ rule all_genomes:
     input:
         "data/dawg.params",
     output:
-        temp("data/all_genomes.fasta")
+        "data/all_genomes.fasta",
     log:
         "data/log/dawg.log"
     shell:
