@@ -16,5 +16,5 @@ with screed.open(opts['<fasta>']) as fh:
         fname = "{}{}.fasta".format(prefix, record.name)
         with open(fname, 'w') as ofh:
             print(">", record.name, sep='', file=ofh)
-            print(record.sequence, file=ofh)
+            print(str(record.sequence).translate(None, '-'), file=ofh)
 
