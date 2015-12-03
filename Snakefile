@@ -21,6 +21,7 @@ labels = [
 GENOMES = [labels[i] for i in range(N)]
 SAMPLES = list(range(REPS))
 COVERAGES = [1, 5, 10, 20,]
+COVERAGES = [5, 20,]
 READ_NUMS = {}
 GENOME_SIZE = int(1e6)
 HASH_SIZE = "5e7"
@@ -38,12 +39,19 @@ for g in GENOMES:
 
 METRICS = ['wip', 'ip']
 
+KWIPS = {
+    'preweighting': './bin/kwip-preweighting',
+    'master': './bin/kwip-master',
+    '0.1.8': './bin/kwip-0.1.8',
+}
+
 
 rule all:
     input:
-        expand("data/kwip/{cov}x-{metric}.{ext}", cov=COVERAGES,
-                metric=METRICS, ext=['dist', 'kern']),
+        expand("data/kwip/{kwip}/{cov}x-{metric}.{ext}", cov=COVERAGES,
+                metric=METRICS, ext=['dist', 'kern'], kwip=KWIPS),
         expand("data/kwip/{cov}x.stat", cov=COVERAGES),
+        #expand("data/kwip/{kwip}/{cov}x.stat", cov=COVERAGES, kwip=KWIPS),
 
 rule clean:
     shell:
@@ -225,16 +233,17 @@ rule kwip:
         sorted(expand("data/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
                genome=GENOMES, sample=SAMPLES))
     output:
-        d="data/kwip/{cov}x-{metric}.dist",
-        k="data/kwip/{cov}x-{metric}.kern"
+        d="data/kwip/{kwip}/{cov}x-{metric}.dist",
+        k="data/kwip/{kwip}/{cov}x-{metric}.kern"
     params:
-        metric= lambda w: '-U' if w.metric == 'ip' else ''
+        metric= lambda w: '-U' if w.metric == 'ip' else '',
+        kwip=lambda w: KWIPS[w.kwip],
     log:
-        "data/log/kwip/{cov}x-{metric}.log"
+        "data/log/kwip/{kwip}/{cov}x-{metric}.log"
     threads:
         24
     shell:
-        "kwip"
+        "{params.kwip}"
         " {params.metric}"
         " -d {output.d}"
         " -k {output.k}"
@@ -259,3 +268,23 @@ rule kwip_stats:
         " -t {threads}"
         " {input}"
         " >{log} 2>&1"
+
+
+# rule kwip_stats:
+#     input:
+#         expand("data/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
+#                genome=GENOMES, sample=SAMPLES)
+#     output:
+#         "data/kwip/{kwip}/{cov}x.stat"
+#     params:
+#         kwip=lambda w: KWIPS[w.kwip],
+#     log:
+#         "data/log/kwip-entvec/{kwip}/{cov}x.log"
+#     threads:
+#         24
+#     shell:
+#         "{params.kwip}"
+#         " -o {output}"
+#         " -t {threads}"
+#         " {input}"
+#         " >{log} 2>&1"
