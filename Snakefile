@@ -5,10 +5,12 @@ from math import log, ceil
 from snakemake.utils import format as snakefmt
 import random
 
-Ne = 2048   # Effective population size
+#Ne = 2048   # Effective population size
+Ne = 512   # Effective population size
 Npop = 8    # populations
 Nloci = 1   # Chromosomes
-N = 48      # number of samples from population
+#N = 48      # number of samples from population
+N = 12      # number of samples from population
 REPS = 3    # Replicate runs per sample
 M = 0.3     # Migration Rate
 
@@ -197,6 +199,7 @@ rule ilfq:
         " 2>>{log}"
         " | ./bin/trimit"
         " -q 28"
+        " 2>/dev/null"
         " | gzip > {output}"
         " 2>>{log}"
 
