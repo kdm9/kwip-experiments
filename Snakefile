@@ -9,7 +9,7 @@ Ne = 2048   # Effective population size
 Npop = 8    # populations
 Nloci = 1   # Chromosomes
 N = 48      # number of samples from population
-REPS = 2    # Replicate runs per sample
+REPS = 3    # Replicate runs per sample
 M = 0.3     # Migration Rate
 
 
@@ -22,7 +22,7 @@ GENOMES = [labels[i] for i in range(N)]
 SAMPLES = list(range(REPS))
 COVERAGES = [1, 5, 10, 20,]
 READ_NUMS = {}
-GENOME_SIZE = int(5e5)
+GENOME_SIZE = int(1e6)
 HASH_SIZE = "5e7"
 
 
@@ -43,11 +43,11 @@ rule all:
     input:
         expand("data/kwip/{cov}x-{metric}.{ext}", cov=COVERAGES,
                 metric=METRICS, ext=['dist', 'kern']),
-        #expand("data/kwip/{cov}x.stat", cov=COVERAGES),
+        expand("data/kwip/{cov}x.stat", cov=COVERAGES),
 
 rule clean:
     shell:
-        "rm -rf data"
+        "rm -rf data .snakemake"
 
 
 def scrm_args(wc):
@@ -57,7 +57,6 @@ def scrm_args(wc):
     pops = " ".join([str(perpop) for _ in range(Npop)])
     args += " -I {:d} {:s} {} ".format(Npop, pops, M)
     return args
-
 
 rule population:
     output:
@@ -86,6 +85,7 @@ rule dawgtree:
         " -n {params.N}"
         " -o {output}"
         " {input}"
+
 
 rule paramfile:
     input:
