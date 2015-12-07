@@ -231,8 +231,8 @@ rule kwip:
         sorted(expand("data/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
                genome=GENOMES, sample=SAMPLES))
     output:
-        d="data/kwip/{kwip}/{cov}x-{metric}.dist",
-        k="data/kwip/{kwip}/{cov}x-{metric}.kern"
+        d="data/kwip/{kwip}/{kwip}-{cov}x-{metric}.dist",
+        k="data/kwip/{kwip}/{kwip}-{cov}x-{metric}.kern"
     params:
         metric= lambda w: '-U' if w.metric == 'ip' else '',
         kwip=lambda w: KWIPS[w.kwip],
