@@ -42,9 +42,8 @@ for g in GENOMES:
 METRICS = ['wip', 'ip']
 
 KWIPS = {
-    'preweighting': './bin/kwip-preweighting',
-    'master': './bin/kwip-master',
     '0.1.8': './bin/kwip-0.1.8',
+    '0.1.10': './bin/kwip-0.1.10',
 }
 
 
