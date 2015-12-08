@@ -27,6 +27,7 @@ COVERAGES = [5, 20,]
 READ_NUMS = {}
 GENOME_SIZE = int(1e6)
 HASH_SIZE = "5e7"
+SCALE = 0.01  # per base subs/indel rate
 
 
 random.seed(234)
@@ -109,7 +110,7 @@ rule paramfile:
         dawg = """
         [Tree]
         Tree = "{tree}"
-        Scale = 0.0000001
+        Scale = {scale:.20f}
 
         [Indel]
         Model.Ins = Geo
@@ -124,7 +125,7 @@ rule paramfile:
 
         [Root]
         Length = {length}
-        """.format(length=str(GENOME_SIZE), tree=tree)
+        """.format(length=str(GENOME_SIZE), tree=tree, scale=SCALE * 1e-6)
         with open(output[0], 'w') as fh:
             print(dawg, file=fh)
 
