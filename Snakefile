@@ -49,7 +49,7 @@ KWIPS = {
 
 rule all:
     input:
-        expand("data/kwip/{kwip}/{cov}x-{metric}.{ext}", cov=COVERAGES,
+        expand("data/kwip/{kwip}/{kwip}-{cov}x-{metric}.{ext}", cov=COVERAGES,
                 metric=METRICS, ext=['dist', 'kern'], kwip=KWIPS),
         expand("data/kwip/{cov}x.stat", cov=COVERAGES),
         #expand("data/kwip/{kwip}/{cov}x.stat", cov=COVERAGES, kwip=KWIPS),
