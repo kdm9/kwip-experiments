@@ -45,6 +45,7 @@ METRICS = ['wip', 'ip']
 KWIPS = {
     '0.1.8': './bin/kwip-0.1.8',
     '0.1.10': './bin/kwip-0.1.10',
+    'l1norm': './bin/kwip-l1',
 }
 
 
