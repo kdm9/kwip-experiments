@@ -1,5 +1,5 @@
 ==============================
-kWIP experiements Docker image
+kWIP experiments Docker image
 ==============================
 
 Usage
