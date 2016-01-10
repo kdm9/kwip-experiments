@@ -1,0 +1,4 @@
+scrm
+snakemake
+mason (>=2.0)
+dawg2
