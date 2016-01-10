@@ -192,7 +192,7 @@ rule ilfq:
     priority:
         10
     output:
-        temp("data/samples/{genome}-{sample}_{cov}x_il.fastq")
+        temp("data/tmp/{genome}-{sample}_{cov}x_il.fastq")
     log:
         "data/log/join/{genome}-{sample}_{cov}x.log"
     shell:
@@ -208,7 +208,7 @@ rule ilfq:
 
 rule hash:
     input:
-        "data/samples/{genome}-{sample}_{cov}x_il.fastq"
+        "data/tmp/{genome}-{sample}_{cov}x_il.fastq"
     output:
         "data/hashes/{genome}-{sample}_{cov}x.ct.gz"
     params:
