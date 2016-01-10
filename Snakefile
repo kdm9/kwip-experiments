@@ -15,37 +15,52 @@ REPS = 3    # Replicate runs per sample
 M = 0.3     # Migration Rate
 
 
+SEED = 435
+random.seed(SEED)
+
 # Sample names
 labels = [
     "".join(x)
     for x in itertools.product(string.ascii_uppercase, repeat=int(ceil(log(N, 26))))
 ]
+
 GENOMES = [labels[i] for i in range(N)]
 SAMPLES = list(range(REPS))
-COVERAGES = [1, 5, 10, 20,]
-COVERAGES = [50,]
-READ_NUMS = {}
-GENOME_SIZE = int(1e6)
+COV_VAR = [
+    (1, 0.01),
+    (5, 0.01),
+    (15, 0.01),
+    (30, 0.01),
+    (100, 0.01),
+    (30, 0.05),
+    (30, 0.001),
+]
+
+COVERAGE_CV = 0.3
+GENOME_SIZE = int(1e7)
 HASH_SIZE = "5e7"
 SCALE = 0.01  # per base subs/indel rate
 
 
-random.seed(234)
+# All sim params
+PARAMS = {}
+
 for g in GENOMES:
-    READ_NUMS[g] = {}
+    PARAMS[g] = {}
     for s in SAMPLES:
-        READ_NUMS[g][str(s)] = {}
-        for c in COVERAGES:
-            cov = random.gauss(c, c* 0.3)
+        PARAMS[g][str(s)] = {}
+        for c, v in COV_VAR:
+            cov = random.gauss(c, c * COVERAGE_CV)
             nread = (cov * GENOME_SIZE) / 200
-            READ_NUMS[g][str(s)][str(c)] = int(nread)
+            PARAMS[g][str(s)][str(c)] = int(nread)
+
+print(PARAMS)
 
 METRICS = ['wip', 'ip']
 
 KWIPS = {
     '0.1.8': './bin/kwip-0.1.8',
     '0.1.10': './bin/kwip-0.1.10',
-    'l1norm': './bin/kwip-l1',
 }
 
 
@@ -57,6 +72,7 @@ rule all:
         expand("data/hashes/{genome}-{sample}_{cov}x.ct.gz", cov=COVERAGES,
                genome=GENOMES, sample=SAMPLES),
         #expand("data/kwip/{kwip}/{cov}x.stat", cov=COVERAGES, kwip=KWIPS),
+
 
 rule clean:
     shell:
@@ -132,6 +148,7 @@ rule paramfile:
         with open(output[0], 'w') as fh:
             print(dawg, file=fh)
 
+
 rule all_genomes:
     input:
         "data/dawg.params",
@@ -176,7 +193,6 @@ rule samples:
     shell:
         "mason_simulator"
         " -ir {input}"
-        #" --illumina-prob-mismatch-scale 2.0"
         " --illumina-read-length 101"
         " -o {output.r1}"
         " -or {output.r2}"
