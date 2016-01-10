@@ -211,6 +211,8 @@ rule hash:
         "data/tmp/{genome}-{sample}_{cov}x_il.fastq"
     output:
         "data/hashes/{genome}-{sample}_{cov}x.ct.gz"
+    priority:
+        11
     params:
         x=HASH_SIZE,
         N='1',
