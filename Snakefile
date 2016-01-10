@@ -23,7 +23,7 @@ labels = [
 GENOMES = [labels[i] for i in range(N)]
 SAMPLES = list(range(REPS))
 COVERAGES = [1, 5, 10, 20,]
-COVERAGES = [5, 20,]
+COVERAGES = [50,]
 READ_NUMS = {}
 GENOME_SIZE = int(1e6)
 HASH_SIZE = "5e7"
@@ -51,9 +51,11 @@ KWIPS = {
 
 rule all:
     input:
-        expand("data/kwip/{kwip}/{kwip}-{cov}x-{metric}.{ext}", cov=COVERAGES,
-                metric=METRICS, ext=['dist', 'kern'], kwip=KWIPS),
-        expand("data/kwip/{cov}x.stat", cov=COVERAGES),
+        #expand("data/kwip/{kwip}/{kwip}-{cov}x-{metric}.{ext}", cov=COVERAGES,
+        #        metric=METRICS, ext=['dist', 'kern'], kwip=KWIPS),
+        #expand("data/kwip/{cov}x.stat", cov=COVERAGES),
+        expand("data/hashes/{genome}-{sample}_{cov}x.ct.gz", cov=COVERAGES,
+               genome=GENOMES, sample=SAMPLES),
         #expand("data/kwip/{kwip}/{cov}x.stat", cov=COVERAGES, kwip=KWIPS),
 
 rule clean:
@@ -190,7 +192,7 @@ rule ilfq:
     priority:
         10
     output:
-        "data/samples/{genome}-{sample}_{cov}x_il.fastq.gz"
+        temp("data/samples/{genome}-{sample}_{cov}x_il.fastq")
     log:
         "data/log/join/{genome}-{sample}_{cov}x.log"
     shell:
@@ -201,13 +203,12 @@ rule ilfq:
         " | ./bin/trimit"
         " -q 28"
         " 2>/dev/null"
-        " | gzip > {output}"
-        " 2>>{log}"
+        " > {output}"
 
 
 rule hash:
     input:
-        "data/samples/{genome}-{sample}_{cov}x_il.fastq.gz"
+        "data/samples/{genome}-{sample}_{cov}x_il.fastq"
     output:
         "data/hashes/{genome}-{sample}_{cov}x.ct.gz"
     params:
