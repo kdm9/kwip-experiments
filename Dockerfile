@@ -2,6 +2,7 @@ FROM debian:testing
 MAINTAINER Kevin Murray <spam@kdmurray.id.au>
 
 # Install debian packages
+RUN sed -i -e 's/httpredir.debian.org/mirrors.kernel.org/' /etc/apt/sources.list
 RUN apt-get update && apt-get upgrade -yy
 
 ## Base applications
@@ -43,6 +44,8 @@ RUN apt-get install -yy --no-install-recommends \
         python-six      \
         python-skbio    \
         snakemake
+
+RUN apt-get clean -y
 
 # this is an optional dep of ete2, and it makes the image massive
 #        python-qt4      \
