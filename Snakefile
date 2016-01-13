@@ -219,7 +219,7 @@ rule ilfq:
         " {input.r1}"
         " {input.r2}"
         " 2>>{log}"
-        " | ./bin/trimit"
+        " | trimit"
         " -q 28"
         " 2>/dev/null"
         " > {output}"
