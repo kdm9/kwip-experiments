@@ -38,7 +38,7 @@ COV_VAR = [
 
 COVERAGE_CV = 0.3
 GENOME_SIZE = int(1e7)
-HASH_SIZE = "5e7"
+HASH_SIZE = "1e8"
 SCALE = 0.01  # per base subs/indel rate
 
 
