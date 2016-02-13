@@ -27,10 +27,15 @@ labels = [
 GENOMES = [labels[i] for i in range(N)]
 SAMPLES = list(range(REPS))
 COV_VAR = [
+    (0.1, 0.01),
+    (0.5, 0.01),
     (1, 0.01),
+    (2, 0.01),
     (5, 0.01),
+    (10, 0.01),
     (15, 0.01),
     (30, 0.01),
+    (50, 0.01),
     (100, 0.01),
     (30, 0.05),
     (30, 0.001),
@@ -38,7 +43,7 @@ COV_VAR = [
 
 COVERAGE_CV = 0.3
 GENOME_SIZE = int(1e7)
-HASH_SIZE = "1e8"
+HASH_SIZE = "5e8"
 SCALE = 0.01  # per base subs/indel rate
 
 
@@ -103,7 +108,6 @@ rule population:
         "| grep '(' "  # Grep for (, which are only in a newick tree output line
         " >{output}"
 
-
 rule dawgtree:
     input:
         "data/population.nwk"
@@ -116,6 +120,7 @@ rule dawgtree:
         " -n {params.N}"
         " -o {output}"
         " {input}"
+
 
 
 rule paramfile:
