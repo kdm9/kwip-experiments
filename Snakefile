@@ -30,11 +30,11 @@ KWIPS = [
 rule all:
     input:
         expand("data/genomes-{s}/{g}.fasta", g=GENOMES, s=SCALES),
-        expand("data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz",
+        expand("data/hashes/{genome}-{scale}-{sample}_{cov}x.ct.gz",
                genome=GENOMES, scale=SCALES, sample=SAMPLES, cov=COVERAGES),
 #        expand("data/kwip/{cov}x-{scale}.stat", cov=COVERAGES, scale=SCALES),
-        expand("data/kwip/{version}/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
-               scale=SCALES, metric=METRICS, ext=["dist", "kern"], version=KWIPS),
+#        expand("data/kwip/{version}/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
+#               scale=SCALES, metric=METRICS, ext=["dist", "kern"], version=KWIPS),
 
 rule all_genomes:
     input:
@@ -117,7 +117,7 @@ rule ilfq:
     priority:
         10
     output:
-        "data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz"
+        temp("data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz")
     log:
         "data/log/join/{genome}-{scale}-{sample}_{cov}x.log"
     shell:
@@ -131,8 +131,7 @@ rule ilfq:
         " -o /dev/stdout"
         " -n"
         " 2>>{log}"
-        " | gzip > {output}"
-        " 2>>{log}"
+        " > {output}"
 
 
 rule hash:
