@@ -8,7 +8,7 @@ SAMPLES = ['1', '2', '3',]
 SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
 GENOME_SIZE = 5e5
-COVERAGES = [20,] #[1, 2, 5, 10, 20,]
+COVERAGES = [3,] #[1, 2, 5, 10, 20,]
 SCALES = ['0.001',] #['0.001', '0.01', '0.1']
 READ_NUMS = {c: {g: {s: str(max(400, int(GENOME_SIZE * nprand.normal(c, 0.5 * c) / 200)))
                         for s in SAMPLES}
@@ -16,25 +16,14 @@ READ_NUMS = {c: {g: {s: str(max(400, int(GENOME_SIZE * nprand.normal(c, 0.5 * c)
                 for c in COVERAGES}
 HASH_SIZE = "5e7"
 METRICS = ['wip', 'ip']
-KWIPS = [
-    '0.1.8',
-    'g95efcc1',
-    'g014b959',
-    'g85625f7',
-    'g95efcc1',
-    'g99dd539',
-    'g9be5572',
-]
-
 
 rule all:
     input:
         expand("data/genomes-{s}/{g}.fasta", g=GENOMES, s=SCALES),
         expand("data/hashes/{genome}-{scale}-{sample}_{cov}x.ct.gz",
                genome=GENOMES, scale=SCALES, sample=SAMPLES, cov=COVERAGES),
-#        expand("data/kwip/{cov}x-{scale}.stat", cov=COVERAGES, scale=SCALES),
-#        expand("data/kwip/{version}/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
-#               scale=SCALES, metric=METRICS, ext=["dist", "kern"], version=KWIPS),
+        expand("data/kwip/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
+               scale=SCALES, metric=METRICS, ext=["dist", "kern"]),
 
 rule all_genomes:
     input:
@@ -162,17 +151,16 @@ rule kwip:
         sorted(expand("data/hashes/{genome}-{{scale}}-{sample}_{{cov}}x.ct.gz",
                genome=GENOMES, sample=SAMPLES))
     output:
-        d="data/kwip/{version}/{cov}x-{scale}-{metric}.dist",
-        k="data/kwip/{version}/{cov}x-{scale}-{metric}.kern"
+        d="data/kwip/{cov}x-{scale}-{metric}.dist",
+        k="data/kwip/{cov}x-{scale}-{metric}.kern"
     params:
         metric= lambda w: '-U' if w.metric == 'ip' else '',
-        version=lambda w: w.version
     log:
         "data/log/kwip/{cov}x-{scale}-{metric}.log"
     threads:
         24
     shell:
-        "bin/kwip-{params.version}"
+        "kwip"
         " {params.metric}"
         " -d {output.d}"
         " -k {output.k}"
