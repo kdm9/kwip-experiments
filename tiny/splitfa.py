@@ -1,0 +1,1 @@
+../splitfa.py
