@@ -93,11 +93,11 @@ RUN cd /usr/local/src && \
     rm -rf libqcpp* *.tar*
 
 # Install kWIP
-RUN cd /usr/local/src && \
-    git clone https://github.com/kdmurray91/kwip && \
-    cd kwip && \
-    mkdir -p build && cd build && \
-    cmake .. && \
-    make all install && \
-    cd ../.. && \
-    rm -rf kwip
+ADD https://github.com/kdmurray91/kWIP/releases/download/0.2.0-rc2/kwip-binaries_0.2.0-rc2.tar.xz /usr/local/src/
+RUN cd /usr/local/ && \
+    tar xvf src/kwip-binaries_*.tar.xz && \
+    rm -rf src/*.tar*
+
+# Obtain the experiments
+WORKDIR /root
+RUN git clone https://github.com/kdmurray91/kwip-experiments
