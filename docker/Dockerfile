@@ -54,42 +54,43 @@ RUN apt-get clean -y
 RUN pip install ete2 khmer==2.0
 
 # Install scrm
+ADD https://github.com/scrm/scrm/releases/download/v1.6.1/scrm-x64-static.tar.gz /usr/local/src/
 RUN cd /usr/local/src && \
-    wget 'https://github.com/scrm/scrm/releases/download/v1.6.1/scrm-x64-static.tar.gz' && \
     tar xvf scrm-x64-static.tar.gz && \
     mv scrm /usr/local/bin && \
-    rm -rf doc scrm-x64-static.tar.gz
+    rm -rf doc *.tar*
 
 # Install mason2
+ADD http://packages.seqan.de/mason2/mason2-2.0.1-Linux-x86_64.tar.bz2 /usr/local/src/
 RUN cd /usr/local/src && \
-    wget 'http://packages.seqan.de/mason2/mason2-2.0.1-Linux-x86_64.tar.bz2' && \
-    tar xvf mason2-2.0.1-Linux-x86_64.tar.bz2 && \
-    mv mason2-2.0.1-Linux-x86_64/bin/* /usr/local/bin && \
-    rm -rf mason2-2.0.1-Linux-x86_64 mason2-2.0.1-Linux-x86_64.tar.bz2
+    tar xvf mason2-*-Linux-x86_64.tar.* && \
+    mv mason2-*-Linux-x86_64/bin/* /usr/local/bin && \
+    rm -rf mason2-* *.tar*
 
 # Install dawg2
+ADD https://github.com/reedacartwright/dawg/archive/develop.tar.gz /usr/local/src/
 RUN cd /usr/local/src && \
-    git clone https://github.com/reedacartwright/dawg/ dawg && \
-    cd dawg && \
-    git checkout develop && \
+    tar xvf develop.tar.gz && \
+    cd dawg-develop && \
     mkdir -p build && cd build && \
     cmake .. && \
     make && \
     make install && \
     mv /usr/local/bin/dawg /usr/local/bin/dawg2 && \
     cd ../.. && \
-    rm -rf dawg
+    rm -rf dawg* *.tar*
 
 # Install libqc++ for trimit
+ADD https://github.com/kdmurray91/libqcpp/archive/0.1.9.tar.gz /usr/local/src/
 RUN cd /usr/local/src && \
-    git clone https://github.com/kdmurray91/libqcpp && \
-    cd libqcpp && \
+    tar xvf 0.1.9.tar.gz && \
+    cd libqcpp-* && \
     mkdir -p build && cd build && \
     cmake .. && \
     make && \
     make install && \
     cd ../.. && \
-    rm -rf libqcpp
+    rm -rf libqcpp* *.tar*
 
 # Install kWIP
 RUN cd /usr/local/src && \
