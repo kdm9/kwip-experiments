@@ -1,57 +1,48 @@
-FROM debian:testing
+FROM debian:jessie
 MAINTAINER Kevin Murray <spam@kdmurray.id.au>
 
 # Install debian packages
-RUN sed -i -e 's/httpredir.debian.org/mirrors.kernel.org/' /etc/apt/sources.list
-RUN apt-get update && apt-get upgrade -yy
-
-## Base applications
-RUN apt-get install -yy --no-install-recommends \
-        htop            \
+RUN sed -i -e 's/httpredir.debian.org/mirrors.kernel.org/' /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get upgrade -yy \
+    && apt-get install -yy \
         less            \
         ncdu            \
         screen          \
         tree            \
         vim             \
-        wget
-
-## Base devl stuff
-RUN apt-get install -yy --no-install-recommends \
+        wget        	\
         bison           \
         build-essential \
+        gfortran	\
         cmake           \
-        cython          \
         flex            \
         git             \
-        libboost-all-dev \
+        libboost-dev         \
         libbz2-dev      \
-        libgsl-dev      \
+        libgsl0-dev     \
         libyaml-cpp-dev \
-        python-dev      \
-        zlib1g-dev
-
-
-# Python software
-RUN apt-get install -yy --no-install-recommends \
-        python-cogent   \
-        python-docopt   \
-        python-lxml     \
-        python-matplotlib \
-        python-numpy    \
-        python-pandas   \
-        python-pip      \
-        python-scipy    \
-        python-six      \
-        python-skbio    \
-        snakemake
-
-RUN apt-get clean -y
-
-# this is an optional dep of ete2, and it makes the image massive
-#        python-qt4      \
+        libxml2-dev	\
+        libxslt1-dev	\
+        libblas-dev 	\
+        libfreetype6-dev \
+        libpng12-dev	\
+        liblapack-dev	\
+        libsuitesparse-dev \
+        zlib1g-dev        \
+        cython3         \
+        python3-dev     \
+        python3-pip     \
+    && apt-get autoremove \
+    && apt-get clean -y  \
+    && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # Install python applications & pacakges
-RUN pip install ete2 khmer==2.0
+RUN pip3 install cython \
+    && pip3 install numpy>=1.9.2 \
+    && pip3 install scipy \
+    && pip3 install ete3 khmer==2.0 scikit-bio matplotlib \
+    && pip3 install snakemake
 
 # Install scrm
 ADD https://github.com/scrm/scrm/releases/download/v1.6.1/scrm-x64-static.tar.gz /usr/local/src/
