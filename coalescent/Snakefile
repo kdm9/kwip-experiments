@@ -198,6 +198,8 @@ rule samples:
         rn=lambda w: str(READ_NUMS[w.genome][w.sample][w.cov][w.scale])
     log:
         "data/log/samples/{cov}x-{scale}/{genome}-{sample}.log"
+    threads:
+        4
     shell:
         "mason_simulator"
         " -ir {input}"
@@ -206,6 +208,7 @@ rule samples:
         " -or {output.r2}"
         " --seed {params.seed}"
         " -n {params.rn}"
+        " --num-threads {threads}"
         " >{log} 2>&1"
 
 
@@ -213,8 +216,6 @@ rule ilfq:
     input:
         r1="data/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
         r2="data/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
-    priority:
-        10
     output:
         temp("data/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq")
     log:
@@ -236,13 +237,15 @@ rule hash:
     output:
         "data/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"
     priority:
-        11
+        10
     params:
         x=HASH_SIZE,
         N='1',
         k='20',
     log:
         "data/log/hashes/{genome}-{sample}_{cov}x.log"
+    threads:
+        4
     shell:
         "load-into-counting.py"
         " -N {params.N}"
@@ -250,6 +253,7 @@ rule hash:
         " -k {params.k}"
         " -b"
         " -s tsv"
+        " -T {threads}"
         " {output}"
         " {input}"
         " >{log} 2>&1"
