@@ -42,9 +42,10 @@ RUN sed -i -e 's/httpredir.debian.org/mirrors.kernel.org/' /etc/apt/sources.list
 # Install python applications & pacakges
 RUN pip3 install cython \
     && pip3 install numpy>=1.9.2 \
-    && pip3 install scipy \
-    && pip3 install --pre ete3 \
-    && pip3 install snakemake khmer==2.0 scikit-bio matplotlib
+    && pip3 install scipy
+RUN pip3 install --pre ete3 \
+    && pip3 install snakemake khmer==2.0 scikit-bio \
+                    matplotlib docopt
 
 # Install scrm
 ADD https://github.com/scrm/scrm/releases/download/v1.6.1/scrm-x64-static.tar.gz /usr/local/src/
