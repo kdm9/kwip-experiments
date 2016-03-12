@@ -4,6 +4,7 @@ import itertools
 from math import log, ceil
 from snakemake.utils import format as snakefmt
 import random
+import re
 
 Ne = 12     # Effective population size
 Nrecomb = 1 # Recombinations per generatiton per haplotype
@@ -99,13 +100,48 @@ rule population:
         args=scrm_args
     log:
         "data/log/scrm.log"
-    shell:
-        "scrm"
+    shell: "scrm"
         " {params.args}"
         " -seed {SEED}"
         " 2>&1"
         "| tee {log} | grep '(' "  # Grep for (, which are only in a newick tree output line
         " >{output}"
+
+
+rule paramfile:
+    input:
+        "data/population.nwk"
+    output:
+        "data/dawg-{scale}.params",
+    params:
+        scale=lambda wc: "{:.20f}".format(float(wc.scale)* 1e-6)
+    run:
+        dawg = '''
+        [Tree]
+        Scale = {scale}
+        [Indel]
+        Model.Ins = Geo
+        Model.Del = Geo
+        Rate.Ins = 0.005
+        Rate.Del = 0.005
+
+        [Subst]
+        Model = F84
+        Freqs  = 0.3, 0.2, 0.2, 0.3
+        Params = 2.5
+        '''.format(scale=params.scale)
+        with open(input[0])  as fh:
+            for i, treeline in enumerate(fh):
+                length, tree = re.search(r'\[(.*)\](\(.*;)', treeline).groups()
+                dawg += '''
+                [[-]]
+                Root.Segment = {i:d}
+                Root.Length = {length}
+                Tree.Tree = {tree}
+                '''.format(i=i, length=length, tree=tree)
+        dawg = '\n'.join(x.lstrip() for x in dawg.split('\n'))
+        with open(output[0], 'w') as fh:
+            print(dawg, file=fh)
 
 
 rule all_genomes:
@@ -118,17 +154,10 @@ rule all_genomes:
     log:
         "data/log/seqgen-{scale}.log"
     shell:
-        'seq-gen'
-        ' -oF'
-        ' -z{params.seed}'
-        ' -mHKY'
-        ' -d{wildcards.scale}'
-        ' -t2.5'
-        ' -f 0.31 .19 .19 .31'
-        ' -l{GENOME_SIZE}'
-        ' -p$(wc -l {input})'
-        ' >{output}'
-        ' 2>{log}'
+        'dawg2'
+        ' -o {output}'
+        ' --seed {params.seed}'
+        ' 2>{log} 1>&2'
 
 
 rule genomes:
