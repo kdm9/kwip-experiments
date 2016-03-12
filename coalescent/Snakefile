@@ -5,27 +5,15 @@ from math import log, ceil
 from snakemake.utils import format as snakefmt
 import random
 
-#Ne = 2048   # Effective population size
-Ne = 512   # Effective population size
-Npop = 8    # populations
+Ne = 12     # Effective population size
+Nrecomb = 1 # Recombinations per generatiton per haplotype
 Nloci = 1   # Chromosomes
-#N = 48      # number of samples from population
-N = 12      # number of samples from population
+N = Ne      # number of samples from population
 REPS = 3    # Replicate runs per sample
-M = 0.3     # Migration Rate
-
-
-SEED = 435
-random.seed(SEED)
-
-# Sample names
-labels = [
-    "".join(x)
-    for x in itertools.product(string.ascii_uppercase, repeat=int(ceil(log(N, 26))))
-]
-
-GENOMES = [labels[i] for i in range(N)]
-SAMPLES = list(range(REPS))
+COVERAGE_CV = 0.3
+GENOME_SIZE = int(1e7)
+HASH_SIZE = "2e9"
+# Tuples of coverage, tree scale (variants per base from root to tip)
 COV_VAR = [
     (0.1, 0.01),
     (0.5, 0.01),
@@ -37,14 +25,26 @@ COV_VAR = [
     (30, 0.01),
     (50, 0.01),
     (100, 0.01),
+    (30, 0.1),
     (30, 0.05),
+    (30, 0.02),
+    #(30, 0.01), From above
+    (30, 0.005),
     (30, 0.001),
 ]
+#DISABLED: Npop = 4    # populations
 
-COVERAGE_CV = 0.3
-GENOME_SIZE = int(1e7)
-HASH_SIZE = "5e8"
-SCALE = 0.01  # per base subs/indel rate
+SEED = 435
+random.seed(SEED)
+
+# Sample names
+labels = [
+    "".join(x)
+    for x in itertools.product(string.ascii_uppercase, repeat=int(ceil(log(N, 26))))
+]
+
+GENOMES = [labels[i] for i in range(N)]
+SAMPLES = [str(i) for i in range(REPS)]
 
 
 # All sim params
@@ -88,10 +88,8 @@ rule clean:
 
 def scrm_args(wc):
     args = "{:d} {:d} ".format(Ne, Nloci)
+    args += "-r {:d} {:d} ".format(Ne * Nrecomb, GENOME_SIZE)
     args += "-T "
-    perpop = int(Nloci / Npop)
-    pops = " ".join([str(perpop) for _ in range(Npop)])
-    args += " -I {:d} {:s} {} ".format(Npop, pops, M)
     return args
 
 rule population:
@@ -104,71 +102,33 @@ rule population:
     shell:
         "scrm"
         " {params.args}"
-        " 2>{log}"
-        "| grep '(' "  # Grep for (, which are only in a newick tree output line
+        " -seed {SEED}"
+        " 2>&1"
+        "| tee {log} | grep '(' "  # Grep for (, which are only in a newick tree output line
         " >{output}"
-
-rule dawgtree:
-    input:
-        "data/population.nwk"
-    output:
-        "data/sample.nwk"
-    params:
-        N=str(N)
-    shell:
-        "scripts/random_subtree.py"
-        " -n {params.N}"
-        " -o {output}"
-        " {input}"
-
-
-
-rule paramfile:
-    input:
-        "data/sample.nwk"
-    output:
-        "data/dawg-{scale}.params",
-    params:
-        length=str(GENOME_SIZE),
-        scale=lambda wc: "{:.20f}".format(float(wc.scale) * 1e-6)
-    run:
-        with open(input[0])  as fh:
-            tree = fh.read().strip()
-        dawg = """
-        [Tree]
-        Tree = "{tree}"
-        Scale = {scale}
-
-        [Indel]
-        Model.Ins = Geo
-        Model.Del = Geo
-        Rate.Ins = 0.005
-        Rate.Del = 0.005
-
-        [Subst]
-        Model = F84
-        Freqs  = 0.3, 0.2, 0.2, 0.3
-        Params = 2.5
-
-        [Root]
-        Length = {length}
-        """.format(length=str(GENOME_SIZE), tree=tree, scale=params.scale)
-        with open(output[0], 'w') as fh:
-            print(dawg, file=fh)
 
 
 rule all_genomes:
     input:
-        "data/dawg-{scale}.params",
+        'data/population.nwk'
     output:
         "data/all_genomes-{scale}.fasta"
+    params:
+        seed=lambda w: str(abs(random.randrange(2e9)))
     log:
-        "data/log/dawg-{scale}.log"
+        "data/log/seqgen-{scale}.log"
     shell:
-        "dawg2"
-        " {input}"
-        " -o {output}"
-        " >{log} 2>&1"
+        'seq-gen'
+        ' -oF'
+        ' -z{params.seed}'
+        ' -mHKY'
+        ' -d{wildcards.scale}'
+        ' -t2.5'
+        ' -f 0.31 .19 .19 .31'
+        ' -l{GENOME_SIZE}'
+        ' -p$(wc -l {input})'
+        ' >{output}'
+        ' 2>{log}'
 
 
 rule genomes:
@@ -177,13 +137,15 @@ rule genomes:
     output:
         expand("data/genomes/{{scale}}/{g}.fasta", g=GENOMES)
     params:
-        dir="data/genomes/{scale}/"
+        dir="data/genomes/{scale}/",
+        names=' '.join(GENOMES),
     log:
         "data/log/splitfa-{scale}.log"
     shell:
         "scripts/splitfa.py"
         " {input}"
         " {params.dir}"
+        ' {params.names}'
         " >{log} 2>&1"
 
 
