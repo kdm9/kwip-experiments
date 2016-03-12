@@ -5,6 +5,7 @@ from math import log, ceil
 from snakemake.utils import format as snakefmt
 import random
 import re
+import json
 
 Ne = 12     # Effective population size
 Nrecomb = 1 # Recombinations per generatiton per haplotype
@@ -35,8 +36,10 @@ COV_VAR = [
 ]
 #DISABLED: Npop = 4    # populations
 
-SEED = 435
-random.seed(SEED)
+random.seed(1234)
+NEXP = 5
+SEEDS = [random.randrange(1e9) for x in range(NEXP)]
+print(SEEDS)
 
 # Sample names
 labels = [
@@ -49,37 +52,41 @@ SAMPLES = [str(i) for i in range(REPS)]
 
 
 # All sim params
+
 READ_NUMS = {}
-
-for g in GENOMES:
-    READ_NUMS[g] = {}
-    for s in SAMPLES:
-        READ_NUMS[g][str(s)] = {}
-        for c, v in COV_VAR:
-            cov = random.gauss(c, c * COVERAGE_CV)
-            nread = (cov * GENOME_SIZE) / 200
-            try:
-                READ_NUMS[g][str(s)][str(c)][str(v)] = int(nread)
-            except KeyError:
-                READ_NUMS[g][str(s)][str(c)] = {str(v): int(nread)}
-
+for seed in SEEDS:
+    random.seed(seed)
+    readnum = {}
+    for g in GENOMES:
+        readnum[g] = {}
+        for s in SAMPLES:
+            readnum[g][str(s)] = {}
+            for c, v in COV_VAR:
+                cov = random.gauss(c, c * COVERAGE_CV)
+                nread = (cov * GENOME_SIZE) / 200
+                try:
+                    readnum[g][str(s)][str(c)][str(v)] = int(nread)
+                except KeyError:
+                    readnum[g][str(s)][str(c)] = {str(v): int(nread)}
+    READ_NUMS[str(seed)] = readnum
 
 METRICS = ['wip', 'ip']
 
 
 rule all:
     input:
-        expand(expand("data/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
+        expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
-               genome=GENOMES, sample=SAMPLES),
-        expand(expand("data/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+               seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
-               metric=METRICS, ext=['dist', 'kern']),
-        expand("data/kwip/{cov}x-{scale}.stat", zip,
-               cov=map(lambda x: x[0], COV_VAR),
-               scale=map(lambda x: x[1], COV_VAR)),
+               seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
+        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
+                      cov=map(lambda x: x[0], COV_VAR),
+                      scale=map(lambda x: x[1], COV_VAR)),
+               seed=SEEDS)
 
 
 rule clean:
@@ -95,15 +102,16 @@ def scrm_args(wc):
 
 rule population:
     output:
-        "data/population.nwk"
+        "data/{seed}/population.nwk"
     params:
-        args=scrm_args
+        args=scrm_args,
+        seed=lambda w: w.seed,
     log:
-        "data/log/scrm.log"
+        "data/{seed}/log/scrm.log"
     shell:
         "scrm"
         " {params.args}"
-        " -seed {SEED}"
+        " -seed {params.seed}"
         " 2>&1"
         "| tee {log} | grep '(' "  # Grep for (, which are only in a newick tree output line
         " >{output}"
@@ -111,9 +119,9 @@ rule population:
 
 rule paramfile:
     input:
-        "data/population.nwk"
+        "data/{seed}/population.nwk"
     output:
-        "data/dawg-{scale}.params",
+        "data/{seed}/dawg-{scale}.params",
     params:
         scale=lambda wc: "{:.20f}".format(float(wc.scale)* 1e-6)
     run:
@@ -147,13 +155,13 @@ rule paramfile:
 
 rule all_genomes:
     input:
-        "data/dawg-{scale}.params",
+        "data/{seed}/dawg-{scale}.params",
     output:
-        "data/all_genomes-{scale}.fasta"
-    params:
-        seed=lambda w: str(abs(random.randrange(2e9)))
+        "data/{seed}/all_genomes-{scale}.fasta"
     log:
-        "data/log/seqgen-{scale}.log"
+        "data/{seed}/log/seqgen-{scale}.log"
+    params:
+        seed=lambda w: w.seed,
     shell:
         'dawg2'
         ' -o {output}'
@@ -164,14 +172,14 @@ rule all_genomes:
 
 rule genomes:
     input:
-        "data/all_genomes-{scale}.fasta"
+        "data/{seed}/all_genomes-{scale}.fasta"
     output:
-        expand("data/genomes/{{scale}}/{g}.fasta", g=GENOMES)
+        expand("data/{{seed}}/genomes/{{scale}}/{g}.fasta", g=GENOMES)
     params:
-        dir="data/genomes/{scale}/",
+        dir="data/{seed}/genomes/{scale}/",
         names=' '.join(GENOMES),
     log:
-        "data/log/splitfa-{scale}.log"
+        "data/{seed}/log/splitfa-{scale}.log"
     shell:
         "scripts/splitfa.py"
         " {input}"
@@ -182,15 +190,15 @@ rule genomes:
 
 rule samples:
     input:
-        "data/genomes/{scale}/{genome}.fasta",
+        "data/{seed}/genomes/{scale}/{genome}.fasta",
     output:
-        r1=temp("data/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq"),
-        r2=temp("data/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"),
+        r1=temp("data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq"),
+        r2=temp("data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"),
     params:
-        seed=lambda w: str(int(hash(w.genome + w.sample) % 999983)),
-        rn=lambda w: str(READ_NUMS[w.genome][w.sample][w.cov][w.scale])
+        rn=lambda w: str(READ_NUMS[w.seed][w.genome][w.sample][w.cov][w.scale]),
+        seed=lambda w: w.seed,
     log:
-        "data/log/samples/{cov}x-{scale}/{genome}-{sample}.log"
+        "data/{seed}/log/samples/{cov}x-{scale}/{genome}-{sample}.log"
     threads:
         4
     shell:
@@ -207,12 +215,12 @@ rule samples:
 
 rule ilfq:
     input:
-        r1="data/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
-        r2="data/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
+        r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
+        r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
-        temp("data/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq")
+        temp("data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq")
     log:
-        "data/log/join/{cov}x-{scale}/{genome}-{sample}.log"
+        "data/{seed}/log/join/{cov}x-{scale}/{genome}-{sample}.log"
     shell:
         "interleave-reads.py"
         " {input.r1}"
@@ -226,9 +234,9 @@ rule ilfq:
 
 rule hash:
     input:
-        "data/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq"
+        "data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq"
     output:
-        "data/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"
+        "data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"
     priority:
         10
     params:
@@ -236,7 +244,7 @@ rule hash:
         N='1',
         k='20',
     log:
-        "data/log/hashes/{genome}-{sample}_{cov}x.log"
+        "data/{seed}/log/hashes/{genome}-{sample}_{cov}x.log"
     threads:
         4
     shell:
@@ -254,15 +262,15 @@ rule hash:
 
 rule kwip:
     input:
-        expand("data/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
+        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
                genome=GENOMES, sample=SAMPLES),
     output:
-        d="data/kwip/{cov}x-{scale}-{metric}.dist",
-        k="data/kwip/{cov}x-{scale}-{metric}.kern"
+        d="data/{seed}/kwip/{cov}x-{scale}-{metric}.dist",
+        k="data/{seed}/kwip/{cov}x-{scale}-{metric}.kern"
     params:
         metric= lambda w: '-U' if w.metric == 'ip' else '',
     log:
-        "data/log/kwip/{cov}x-{scale}-{metric}.log"
+        "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
     threads:
         24
     shell:
@@ -277,12 +285,12 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        expand("data/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
+        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
                genome=GENOMES, sample=SAMPLES),
     output:
-        "data/kwip/{cov}x-{scale}.stat"
+        "data/{seed}/kwip/{cov}x-{scale}.stat"
     log:
-        "data/log/kwip-stats/{cov}x-{scale}.log"
+        "data/{seed}/log/kwip-stats/{cov}x-{scale}.log"
     threads:
         24
     shell:
@@ -295,14 +303,14 @@ rule kwip_stats:
 
 # rule kwip_stats:
 #     input:
-#         expand("data/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
+#         expand("data/{seed}/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
 #                genome=GENOMES, sample=SAMPLES)
 #     output:
-#         "data/kwip/{kwip}/{cov}x.stat"
+#         "data/{seed}/kwip/{kwip}/{cov}x.stat"
 #     params:
 #         kwip=lambda w: KWIPS[w.kwip],
 #     log:
-#         "data/log/kwip-entvec/{kwip}/{cov}x.log"
+#         "data/{seed}/log/kwip-entvec/{kwip}/{cov}x.log"
 #     threads:
 #         24
 #     shell:
