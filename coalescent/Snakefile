@@ -100,7 +100,8 @@ rule population:
         args=scrm_args
     log:
         "data/log/scrm.log"
-    shell: "scrm"
+    shell:
+        "scrm"
         " {params.args}"
         " -seed {SEED}"
         " 2>&1"
@@ -146,7 +147,7 @@ rule paramfile:
 
 rule all_genomes:
     input:
-        'data/population.nwk'
+        "data/dawg-{scale}.params",
     output:
         "data/all_genomes-{scale}.fasta"
     params:
@@ -157,6 +158,7 @@ rule all_genomes:
         'dawg2'
         ' -o {output}'
         ' --seed {params.seed}'
+        ' {input}'
         ' 2>{log} 1>&2'
 
 
