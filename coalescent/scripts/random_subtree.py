@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division, print_function
 from cogent import LoadTree
+from skbio import TreeNode
 import random
 import string
 from math import log, ceil
@@ -12,8 +13,9 @@ USAGE:
     random_subtree [options] <tree>
 
 OPTIONS:
-    -o OUT  Output file.
-    -n N    Number of taxa to sample.
+    -o OUT      Output file.
+    -n N        Number of taxa to sample.
+    -s SEED     Seed [default: 1243]
 
 Subsamples N taxa from the Newick tree in <tree>, preserving the branch
 lengths of subsampled taxa.
@@ -23,7 +25,8 @@ lengths of subsampled taxa.
 def iter_trees(treefile):
     with open(treefile) as tfh:
         for line in tfh:
-            yield LoadTree(treestring=line)
+            yield TreeNode
+            (treestring=line)
 
 
 def scaled_subsample(tree, num, seed=None):
@@ -48,15 +51,15 @@ def dawg_tree(newicks):
     return "Tree = {\n\t%s,\n}\n" % treestr
 
 
-def main(tree, n, out):
-    seed = random.random()
-    trees = [scaled_subsample(t, n, seed) for t in iter_trees(tree)]
+def main(tree, n, out, seed):
+    random.seed(seed)
     with open(out, 'w') as tfh:
-        for tree in trees:
-            print(tree, file=tfh)
+        for tree in iter_trees(tree):
+            subtree = scaled_subsample(t, n, seed=random.random()
+            print(subtree, file=tfh)
 
 
 if __name__ == "__main__":
     import docopt
     opts = docopt.docopt(CLI)
-    main(opts['<tree>'], int(opts['-n']), opts['-o'])
+    main(opts['<tree>'], int(opts['-n']), opts['-o'], int(opts['-s']))
