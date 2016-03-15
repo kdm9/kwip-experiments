@@ -4,7 +4,7 @@ from numpy import random as nprand
 nprand.seed(3112)
 
 GENOMES = ['A', 'B', 'C', 'D']
-SAMPLES = ['1', '2', '3',]
+SAMPLES = ['1', '2',]
 SAMPLE_SEEDS = {g: {s: str(i + len(SAMPLES) * j + 1) for j, s in enumerate(SAMPLES)}
                 for i, g in enumerate(GENOMES)}
 GENOME_SIZE = 5e5
@@ -20,10 +20,12 @@ METRICS = ['wip', 'ip']
 rule all:
     input:
         expand("data/genomes-{s}/{g}.fasta", g=GENOMES, s=SCALES),
-        expand("data/hashes/{genome}-{scale}-{sample}_{cov}x.ct.gz",
+        expand("data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz",
                genome=GENOMES, scale=SCALES, sample=SAMPLES, cov=COVERAGES),
-        expand("data/kwip/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
-               scale=SCALES, metric=METRICS, ext=["dist", "kern"]),
+        #expand("data/hashes/{genome}-{scale}-{sample}_{cov}x.ct.gz",
+        #       genome=GENOMES, scale=SCALES, sample=SAMPLES, cov=COVERAGES),
+        #expand("data/kwip/{cov}x-{scale}-{metric}.{ext}", cov=COVERAGES,
+        #       scale=SCALES, metric=METRICS, ext=["dist", "kern"]),
 
 rule all_genomes:
     input:
@@ -106,7 +108,7 @@ rule ilfq:
     priority:
         10
     output:
-        temp("data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz")
+        "data/samples/{genome}-{scale}-{sample}_{cov}x_il.fastq.gz"
     log:
         "data/log/join/{genome}-{scale}-{sample}_{cov}x.log"
     shell:
@@ -114,11 +116,7 @@ rule ilfq:
         " {input.r1}"
         " {input.r2}"
         " 2>>{log}"
-        " | sickle se "
-        " -f /dev/stdin"
-        " -t sanger"
-        " -o /dev/stdout"
-        " -n"
+        " | gzip "
         " 2>>{log}"
         " > {output}"
 
