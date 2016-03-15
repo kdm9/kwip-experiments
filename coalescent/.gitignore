@@ -2,3 +2,6 @@
 .snakemake/
 .ipynb_checkpoints/
 data
+
+# scratch space for analysing output
+runs
