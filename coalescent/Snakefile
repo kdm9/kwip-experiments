@@ -200,7 +200,7 @@ rule samples:
     log:
         "data/{seed}/log/samples/{cov}x-{scale}/{genome}-{sample}.log"
     threads:
-        4
+        9
     shell:
         "mason_simulator"
         " -ir {input}"
@@ -237,8 +237,6 @@ rule hash:
         "data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq"
     output:
         "data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"
-    priority:
-        10
     params:
         x=HASH_SIZE,
         N='1',
@@ -246,7 +244,7 @@ rule hash:
     log:
         "data/{seed}/log/hashes/{genome}-{sample}_{cov}x.log"
     threads:
-        4
+        1
     shell:
         "load-into-counting.py"
         " -N {params.N}"
@@ -272,7 +270,7 @@ rule kwip:
     log:
         "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
     threads:
-        24
+        8
     shell:
         "kwip"
         " {params.metric}"
@@ -292,7 +290,7 @@ rule kwip_stats:
     log:
         "data/{seed}/log/kwip-stats/{cov}x-{scale}.log"
     threads:
-        24
+        8
     shell:
         "kwip-stats"
         " -o {output}"
