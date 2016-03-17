@@ -74,18 +74,18 @@ METRICS = ['wip', 'ip']
 
 rule all:
     input:
-        #expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
-        #              cov=map(lambda x: x[0], COV_VAR),
-        #              scale=map(lambda x: x[1], COV_VAR)),
-        #       seed=SEEDS, genome=GENOMES, sample=SAMPLES),
-        #expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
-        #              cov=map(lambda x: x[0], COV_VAR),
-        #              scale=map(lambda x: x[1], COV_VAR)),
-        #       seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
-        #expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
-        #              cov=map(lambda x: x[0], COV_VAR),
-        #              scale=map(lambda x: x[1], COV_VAR)),
-        #       seed=SEEDS),
+        expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
+                      cov=map(lambda x: x[0], COV_VAR),
+                      scale=map(lambda x: x[1], COV_VAR)),
+               seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+                      cov=map(lambda x: x[0], COV_VAR),
+                      scale=map(lambda x: x[1], COV_VAR)),
+               seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
+        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
+                      cov=map(lambda x: x[0], COV_VAR),
+                      scale=map(lambda x: x[1], COV_VAR)),
+               seed=SEEDS),
         expand('data/{seed}/population.nwk', seed=SEEDS),
 
 
