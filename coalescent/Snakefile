@@ -13,11 +13,11 @@ Nloci = 1   # Chromosomes
 N = Ne      # number of samples from population
 REPS = 3    # Replicate runs per sample
 COVERAGE_CV = 0.3
-GENOME_SIZE = int(1e7)
-HASH_SIZE = "2e9"
+GENOME_SIZE = int(1e6)
+HASH_SIZE = "1e9"
 # Tuples of coverage, tree scale (variants per base from root to tip)
 COV_VAR = [
-    (0.1, 0.01),
+#    (0.1, 0.01),
     (0.5, 0.01),
     (1, 0.01),
     (2, 0.01),
@@ -36,9 +36,9 @@ COV_VAR = [
 ]
 #DISABLED: Npop = 4    # populations
 NEXP = 3
+random.seed(3301)
 
-random.seed(1234)
-SEEDS = [random.randrange(1e9) for x in range(NEXP)]
+SEEDS = [random.randrange(1e4) for x in range(NEXP)]
 
 # Sample names
 labels = [
@@ -74,18 +74,19 @@ METRICS = ['wip', 'ip']
 
 rule all:
     input:
-        expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS, genome=GENOMES, sample=SAMPLES),
-        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
-        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS)
+        #expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
+        #              cov=map(lambda x: x[0], COV_VAR),
+        #              scale=map(lambda x: x[1], COV_VAR)),
+        #       seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        #expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+        #              cov=map(lambda x: x[0], COV_VAR),
+        #              scale=map(lambda x: x[1], COV_VAR)),
+        #       seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
+        #expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
+        #              cov=map(lambda x: x[0], COV_VAR),
+        #              scale=map(lambda x: x[1], COV_VAR)),
+        #       seed=SEEDS),
+        expand('data/{seed}/population.nwk', seed=SEEDS),
 
 
 rule clean:
@@ -101,7 +102,7 @@ def scrm_args(wc):
 
 rule population:
     output:
-        "data/{seed}/population.nwk"
+        "data/{seed}/population_prescale.nwk"
     params:
         args=scrm_args,
         seed=lambda w: w.seed,
@@ -116,13 +117,27 @@ rule population:
         " >{output}"
 
 
+rule scaletree:
+    input:
+        "data/{seed}/population_prescale.nwk"
+    output:
+        "data/{seed}/population.nwk"
+    log:
+        "data/{seed}/log/scaletree.log"
+    shell:
+        "scripts/scaletree.py"
+        " {input}"
+        " >{output}"
+        " 2>{log}"
+
+
 rule paramfile:
     input:
         "data/{seed}/population.nwk"
     output:
         "data/{seed}/dawg-{scale}.params",
     params:
-        scale=lambda wc: "{:.20f}".format(float(wc.scale)* 1e-6)
+        scale=lambda wc: wc.scale
     run:
         dawg = '''
         [Tree]
@@ -275,7 +290,7 @@ rule kwip:
     log:
         "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
     threads:
-        8
+        4
     shell:
         "kwip"
         " {params.metric}"
