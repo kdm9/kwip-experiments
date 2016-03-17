@@ -43,13 +43,15 @@ def get_truth(treefile, reps):
     runs = DistanceMatrix(
         np.repeat(np.repeat(dist.data, reps, axis=1), reps, axis=0))
     runs.ids = ['{}-{}'.format(g, i+1) for g in dist.ids for i in range(reps)]
-    truth = runs.condensed_form()
-    return truth
+    return runs
 
 
 def get_spearmans(distfile, truth):
     distmat = DistanceMatrix.read(distfile)
+    ids = list(sorted(distmat.ids))
+    distmat = distmat.filter(ids)
     dist  = distmat.condensed_form()
+    truth = truth.condensed_form()
     sp = stats.spearmanr(truth, dist)
     return sp.correlation
 
