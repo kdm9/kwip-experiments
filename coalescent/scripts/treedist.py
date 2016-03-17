@@ -4,13 +4,42 @@ from skbio import TreeNode, DistanceMatrix
 from scipy import stats
 import numpy as np
 import pandas as pd
-from os import path
 
+from os import path
+import re
+
+def iter_newick_partitoned(fname):
+    with open(fname) as fh:
+        for line in fh:
+            m = re.match(r'\[(.*)\](\(.*;)', line)
+            if m is None:
+                # Assume it's just a normal newick tree
+                yield 1, TreeNode.read([line])
+            else:
+                l, t = m.groups()
+                yield int(float(l)), TreeNode.read([t])
+
+def partition_weighted_distance(nwkfile):
+    partdist = []
+    partsum = 0
+    totaldist = None
+    tipnames = None
+    for partlen, tree in iter_newick_partitoned(nwkfile):
+        partsum += partlen
+        if tipnames is None:
+            tipnames = list(map(str, sorted(int(x.name) for x in tree.tips())))
+        dist = tree.tip_tip_distances(tipnames).data
+        if totaldist is None:
+            totaldist = np.zeros_like(dist)
+        partdist.append((partlen, dist))
+    for partlen, dist in partdist:
+        scale = partlen / partsum
+        totaldist += dist * scale
+    return DistanceMatrix(totaldist, ids=tipnames)
 
 
 def get_truth(treefile, reps):
-    samp = skbio.read(treefile, into=TreeNode)
-    dist = samp.tip_tip_distances(sorted(x.name for x in samp.tips()))
+    dist = partition_weighted_distance(treefile)
     runs = DistanceMatrix(
         np.repeat(np.repeat(dist.data, reps, axis=1), reps, axis=0))
     runs.ids = ['{}-{}'.format(g, i+1) for g in dist.ids for i in range(reps)]
@@ -62,6 +91,3 @@ if __name__ == '__main__':
 
     df = get_table(tree, distmats, reps)
     print(df.to_csv(index=False))
-
-
-
