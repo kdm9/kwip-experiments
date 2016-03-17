@@ -20,18 +20,21 @@ opts = docopt.docopt(CLI)
 prefix = opts['<prefix>']
 names = opts['<name>']
 
-orig_names = []
+if len(names) > 0:
+    orig_names = []
+    with screed.open(opts['<fasta>']) as fh:
+        for record in fh:
+            orig_names.append(int(record.name))
+
+    newnames = {}
+    for orig, new in zip(sorted(orig_names), names):
+        newnames[str(orig)] = new
+
 with screed.open(opts['<fasta>']) as fh:
     for record in fh:
-        orig_names.append(int(record.name))
-
-newnames = {}
-for orig, new in zip(sorted(orig_names), names):
-    newnames[str(orig)] = new
-
-with screed.open(opts['<fasta>']) as fh:
-    for record in fh:
-        name = newnames[record.name]
+        name = record.name
+        if len(names) > 0:
+            name = newnames[record.name]
         fname = "{}{}.fasta".format(prefix, name)
         with open(fname, 'w') as ofh:
             seq = str(record.sequence).translate({'-': ''})
