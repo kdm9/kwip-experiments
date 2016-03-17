@@ -35,11 +35,10 @@ COV_VAR = [
     (30, 0.001),
 ]
 #DISABLED: Npop = 4    # populations
+NEXP = 3
 
 random.seed(1234)
-NEXP = 5
 SEEDS = [random.randrange(1e9) for x in range(NEXP)]
-print(SEEDS)
 
 # Sample names
 labels = [
@@ -96,7 +95,7 @@ rule clean:
 
 def scrm_args(wc):
     args = "{:d} {:d} ".format(Ne, Nloci)
-    args += "-r {:d} {:d} ".format(Ne * Nrecomb, GENOME_SIZE)
+    #args += "-r {:d} {:d} ".format(Ne * Nrecomb, GENOME_SIZE)
     args += "-T "
     return args
 
@@ -141,7 +140,12 @@ rule paramfile:
         '''.format(scale=params.scale)
         with open(input[0])  as fh:
             for i, treeline in enumerate(fh):
-                length, tree = re.search(r'\[(.*)\](\(.*;)', treeline).groups()
+                m = re.search(r'\[(.*)\](\(.*;)', treeline)
+                if m:
+                    length, tree = m.groups()
+                else:
+                    length = str(GENOME_SIZE)
+                    tree = treeline
                 dawg += '''
                 [[-]]
                 Root.Segment = {i:d}
@@ -218,7 +222,7 @@ rule ilfq:
         r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
         r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
-        temp("data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq")
+        temp("data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz")
     log:
         "data/{seed}/log/join/{cov}x-{scale}/{genome}-{sample}.log"
     shell:
@@ -229,12 +233,13 @@ rule ilfq:
         " | trimit"
         " -q 28"
         " 2>/dev/null"
+        " | gzip --fast"
         " > {output}"
 
 
 rule hash:
     input:
-        "data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_il.fastq"
+        "data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz"
     output:
         "data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"
     params:
