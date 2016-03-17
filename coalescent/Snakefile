@@ -1,6 +1,6 @@
 # Mapping of population name: divergence
-import string
-import itertools
+from string import ascii_uppercase
+import itertools as itl
 from math import log, ceil
 from snakemake.utils import format as snakefmt
 import random
@@ -27,12 +27,12 @@ COV_VAR = [
     (30, 0.01),
     (50, 0.01),
     (100, 0.01),
-    (30, 0.1),
-    (30, 0.05),
-    (30, 0.02),
+#    (30, 0.1),
+#    (30, 0.05),
+#    (30, 0.02),
     #(30, 0.01), From above
-    (30, 0.005),
-    (30, 0.001),
+#    (30, 0.005),
+#    (30, 0.001),
 ]
 #DISABLED: Npop = 4    # populations
 NEXP = 3
@@ -41,10 +41,8 @@ random.seed(3301)
 SEEDS = [random.randrange(1e4) for x in range(NEXP)]
 
 # Sample names
-labels = [
-    "".join(x)
-    for x in itertools.product(string.ascii_uppercase, repeat=int(ceil(log(N, 26))))
-]
+labels = ["".join(x)
+          for x in itl.product(ascii_uppercase, repeat=int(ceil(log(N, 26))))]
 
 GENOMES = [labels[i] for i in range(N)]
 SAMPLES = [str(i) for i in range(REPS)]
@@ -196,14 +194,12 @@ rule genomes:
         expand("data/{{seed}}/genomes/{{scale}}/{g}.fasta", g=GENOMES)
     params:
         dir="data/{seed}/genomes/{scale}/",
-        names=' '.join(GENOMES),
     log:
         "data/{seed}/log/splitfa-{scale}.log"
     shell:
         "scripts/splitfa.py"
         " {input}"
         " {params.dir}"
-        ' {params.names}'
         " >{log} 2>&1"
 
 
