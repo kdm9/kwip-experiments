@@ -35,12 +35,9 @@ def normalise_tree(tree, to=1.0, metric='mean'):
 
     By default, normalise such that the mean of all pairwise distances is 1.0.
     '''
-    print(metric)
     dists = pwdist(tree)
-    print(dists)
     assert metric in METRICS
     current = eval('{}(dists)'.format(metric))
-    print(current)
 
     for node in tree.iter_descendants():
         node.dist /= current
@@ -68,7 +65,6 @@ def main(treefile, to, metric):
     with open(treefile) as fh:
         for treeline in fh:
             tree = Tree(treeline)
-            print(tree.write(format=5))
             tree = alphbetise_names(tree)
             tree = normalise_tree(tree, to, metric)
             print(tree.write(format=5))
