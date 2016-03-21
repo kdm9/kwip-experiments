@@ -62,7 +62,7 @@ for seed in SEEDS:
             readnum[g][str(s)] = {}
             for c, v in COV_VAR:
                 cov = random.gauss(c, c * COVERAGE_CV)
-                nread = (cov * GENOME_SIZE) / 200
+                nread = max((cov * GENOME_SIZE) / 200, 100)
                 try:
                     readnum[g][str(s)][str(c)][str(v)] = int(nread)
                 except KeyError:
@@ -217,7 +217,7 @@ rule samples:
     log:
         "data/{seed}/log/samples/{cov}x-{scale}/{genome}-{sample}.log"
     threads:
-        9
+        2
     shell:
         "mason_simulator"
         " -ir {input}"
@@ -243,11 +243,11 @@ rule ilfq:
         " {input.r1}"
         " {input.r2}"
         " 2>>{log}"
-        " | trimit"
-        " -q 28"
-        " 2>/dev/null"
-        " | gzip --fast"
         " > {output}"
+#        " | trimit"
+#        " -q 28"
+#        " 2>/dev/null"
+#        " | gzip --fast"
 
 
 rule hash:
@@ -288,7 +288,7 @@ rule kwip:
     log:
         "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
     threads:
-        2
+        4
     shell:
         "kwip"
         " {params.metric}"
