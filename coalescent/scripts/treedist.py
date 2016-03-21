@@ -27,7 +27,10 @@ def partition_weighted_distance(nwkfile):
     for partlen, tree in iter_newick_partitoned(nwkfile):
         partsum += partlen
         if tipnames is None:
-            tipnames = list(map(str, sorted(int(x.name) for x in tree.tips())))
+            try:
+                tipnames = list(map(str, sorted(int(x.name) for x in tree.tips())))
+            except ValueError:
+                tipnames = list(sorted(x.name for x in tree.tips()))
         dist = tree.tip_tip_distances(tipnames).data
         if totaldist is None:
             totaldist = np.zeros_like(dist)
