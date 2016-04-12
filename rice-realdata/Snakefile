@@ -1,0 +1,131 @@
+HASH_SIZE = "2e8"
+METRICS = ['wip', 'ip']
+SETS = [0, ]
+
+
+# No user serviceable bits below here
+
+def runlist(setfile):
+    with open(setfile) as fh:
+        runs = filter(lambda w: len(w) > 0, map(str.strip, fh.readlines()))
+        return list(sorted(runs))
+
+ALLSAMPLES = set()
+SETRUNS = {}
+for s in SETS:
+    setfile = "sets/{}.txt".format(s)
+    runs = runlist(setfile)
+    for r in runs:
+        ALLSAMPLES.add(r)
+    SETRUNS[s] = runs
+
+## BEGIN RULES
+
+rule all:
+    input:
+        expand("data/reads/{run}_qc_il.fastq.gz", run=ALLSAMPLES)
+
+rule clean:
+    shell:
+        "rm -rf data .snakemake"
+
+rule sra:
+    output:
+        temp("data/sra/{run}.sra"),
+    log:
+        "data/log/getrun/{run}.log"
+    params:
+        srr=lambda w: w.run
+    shell:
+        "get-run.py"
+        "   -d data/sra"
+        "   -s "
+        "   -i {wildcards.run}"
+        " >{log} 2>&1"
+
+rule qcreads:
+    input:
+        "data/sra/{run}.sra",
+    output:
+        "data/reads/{run}_qc_il.fastq.gz"
+    log:
+        "data/log/qcreads/{run}.log"
+    shell:
+        "( fastq-dump"
+        "   --split-spot"
+        "   --skip-technical"
+        "   --stdout"
+        "   --readids"
+        "   --defline-seq '@$sn/$ri'"
+        "   --defline-qual '+'"
+        "   {input}"
+        "| trimit"
+        "   -q 28"
+        "   -" # stdin
+        "| gzip --fast >{output}"
+        ") 2>/dev/null"
+
+
+rule hash:
+    input:
+        "data/reads/{run}_qc_il.fastq.gz"
+    output:
+        "data/counts/{run}.ct.gz"
+    params:
+        x=HASH_SIZE,
+        N='1',
+        k='20',
+    log:
+        "data/log/counts/{run}.log"
+    threads:
+        1
+    shell:
+        "load-into-counting.py"
+        " -N {params.N}"
+        " -x {params.x}"
+        " -k {params.k}"
+        " -b"
+        " -s tsv"
+        " -T {threads}"
+        " {output}"
+        " {input}"
+        " >{log} 2>&1"
+
+
+rule kwip:
+    input:
+        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
+    output:
+        d="data/kwip/{set}.dist",
+        k="data/kwip/{set}.kern"
+    params:
+        metric= lambda w: '-U' if w.metric == 'ip' else '',
+    log:
+        "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
+    threads:
+        4
+    shell:
+        "kwip"
+        " {params.metric}"
+        " -d {output.d}"
+        " -k {output.k}"
+        " -t {threads}"
+        " {input}"
+        " >{log} 2>&1"
+
+
+rule kwip_stats:
+    input:
+        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
+    output:
+        "data/kwip/{set}.stat"
+    log:
+        "data/log/kwip-stats/{set}.log"
+    threads:
+        8
+    shell:
+        "kwip-stats"
+        " -o {output}"
+        " -t {threads}"
+        " {input}"
+        " >{log} 2>&1"
