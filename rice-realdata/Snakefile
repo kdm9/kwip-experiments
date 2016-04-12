@@ -1,4 +1,4 @@
-HASH_SIZE = "2e8"
+HASH_SIZE = "5e9"
 METRICS = ['wip', 'ip']
 SETS = [0, ]
 
@@ -12,6 +12,7 @@ def runlist(setfile):
 
 ALLSAMPLES = set()
 SETRUNS = {}
+SETS = list(map(str, SETS))
 for s in SETS:
     setfile = "sets/{}.txt".format(s)
     runs = runlist(setfile)
@@ -23,7 +24,8 @@ for s in SETS:
 
 rule all:
     input:
-        expand("data/reads/{run}_qc_il.fastq.gz", run=ALLSAMPLES)
+        expand("data/reads/{run}_qc_il.fastq.gz", run=ALLSAMPLES),
+        expand("data/kwip/{set}_{metric}.{mat}", set=SETS, metric=METRICS, mat=["dist", "kern"]),
 
 rule clean:
     shell:
@@ -77,8 +79,6 @@ rule hash:
         k='20',
     log:
         "data/log/counts/{run}.log"
-    threads:
-        1
     shell:
         "load-into-counting.py"
         " -N {params.N}"
@@ -86,7 +86,6 @@ rule hash:
         " -k {params.k}"
         " -b"
         " -s tsv"
-        " -T {threads}"
         " {output}"
         " {input}"
         " >{log} 2>&1"
@@ -94,16 +93,16 @@ rule hash:
 
 rule kwip:
     input:
-        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
+        lambda wc: expand("data/counts/{run}.ct.gz", run=SETRUNS[wc.set])
     output:
-        d="data/kwip/{set}.dist",
-        k="data/kwip/{set}.kern"
+        d="data/kwip/{set}_{metric}.dist",
+        k="data/kwip/{set}_{metric}.kern"
     params:
-        metric= lambda w: '-U' if w.metric == 'ip' else '',
+        metric=lambda w: '-U' if w.metric == 'ip' else '',
     log:
-        "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
+        "data/log/kwip/{set}-{metric}.log"
     threads:
-        4
+        8
     shell:
         "kwip"
         " {params.metric}"
@@ -116,7 +115,7 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
+        lambda wc: expand("data/counts/{run}.ct.gz", run=SETRUNS[wc.set])
     output:
         "data/kwip/{set}.stat"
     log:
