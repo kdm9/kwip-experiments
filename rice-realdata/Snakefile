@@ -65,7 +65,7 @@ rule qcreads:
         "   -q 28"
         "   -" # stdin
         "| gzip --fast >{output}"
-        ") 2>/dev/null"
+        ") 2>{log}"
 
 
 rule hash:
