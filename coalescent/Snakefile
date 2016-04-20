@@ -48,7 +48,7 @@ COV_VAR = [
     (30, 0.001),
 ]
 #DISABLED: Npop = 4    # populations
-NEXP = 10
+NEXP = 100
 random.seed(3301)
 
 SEEDS = [random.randrange(1e4) for x in range(NEXP)]
@@ -85,10 +85,10 @@ METRICS = ['wip', 'ip']
 
 rule all:
     input:
-        expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        #expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
+        #              cov=map(lambda x: x[0], COV_VAR),
+        #              scale=map(lambda x: x[1], COV_VAR)),
+        #       seed=SEEDS, genome=GENOMES, sample=SAMPLES),
         expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
@@ -97,7 +97,7 @@ rule all:
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
                seed=SEEDS),
-        expand('data/{seed}/population.nwk', seed=SEEDS),
+        #expand('data/{seed}/population.nwk', seed=SEEDS),
 
 
 rule clean:
@@ -265,7 +265,7 @@ rule hash:
     input:
         "data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz"
     output:
-        "data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"
+        temp("data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"),
     params:
         x=HASH_SIZE,
         N='1',
