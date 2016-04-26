@@ -68,8 +68,8 @@ SAMPLES = [str(i) for i in range(REPS)]
 
 
 # All sim params
-
 READ_NUMS = {}
+SCALES = set()
 for seed in SEEDS:
     random.seed(seed)
     readnum = {}
@@ -84,17 +84,20 @@ for seed in SEEDS:
                     readnum[g][str(s)][str(c)][str(v)] = int(nread)
                 except KeyError:
                     readnum[g][str(s)][str(c)] = {str(v): int(nread)}
+                SCALES.add(v)
     READ_NUMS[str(seed)] = readnum
+SCALES = list(SCALES)
 
 METRICS = ['wip', 'ip']
 
 
 rule all:
     input:
-        #expand(expand("data/{{seed}}/hashes/{cov}x-{scale}/{{genome}}-{{sample}}.ct.gz", zip,
-        #              cov=map(lambda x: x[0], COV_VAR),
-        #              scale=map(lambda x: x[1], COV_VAR)),
-        #       seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        expand("data/{seed}/all_genomes-{scale}.dist", seed=SEEDS, scale=SCALES),
+        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
+                      cov=map(lambda x: x[0], COV_VAR),
+                      scale=map(lambda x: x[1], COV_VAR)),
+               seed=SEEDS),
         expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
@@ -103,7 +106,6 @@ rule all:
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
                seed=SEEDS),
-        #expand('data/{seed}/population.nwk', seed=SEEDS),
 
 
 rule clean:
@@ -202,6 +204,19 @@ rule all_genomes:
         'dawg2'
         ' -o {output}'
         ' --seed {params.seed}'
+        ' {input}'
+        ' 2>{log} 1>&2'
+
+
+rule alndist:
+    input:
+        "data/{seed}/all_genomes-{scale}.fasta"
+    output:
+        "data/{seed}/all_genomes-{scale}.dist"
+    log:
+        "data/{seed}/log/alndist-{scale}.log"
+    shell:
+        'scripts/alndist.py'
         ' {input}'
         ' 2>{log} 1>&2'
 
