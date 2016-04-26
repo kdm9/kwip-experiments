@@ -27,17 +27,19 @@ COV_VAR = [
     (15, 0.001),
     (30, 0.001),
     (50, 0.001),
+    (100, 0.001),
+    (200, 0.001),
 
 
-    (0.5, 0.01),
-    (1, 0.01),
-    (2, 0.01),
-    (4, 0.01),
-    (8, 0.01),
-    (12, 0.01),
-    (15, 0.01),
-    (30, 0.01),
-    (50, 0.01),
+#    (0.5, 0.01),
+#    (1, 0.01),
+#    (2, 0.01),
+#    (4, 0.01),
+#    (8, 0.01),
+#    (12, 0.01),
+#    (15, 0.01),
+#    (30, 0.01),
+#    (50, 0.01),
 
 # Range of scales
     (30, 0.1),
@@ -51,7 +53,11 @@ COV_VAR = [
 NEXP = 100
 random.seed(3301)
 
-SEEDS = [random.randrange(1e4) for x in range(NEXP)]
+SEEDS = set()
+while len(SEEDS) < NEXP:
+    SEEDS.add(random.randrange(1e4))
+SEEDS = list(SEEDS)
+print(SEEDS)
 
 # Sample names
 labels = ["".join(x)
@@ -228,7 +234,7 @@ rule samples:
     log:
         "data/{seed}/log/samples/{cov}x-{scale}/{genome}-{sample}.log"
     threads:
-        2
+        1
     shell:
         "mason_simulator"
         " -ir {input}"
@@ -273,7 +279,7 @@ rule hash:
     log:
         "data/{seed}/log/hashes/{genome}-{sample}_{cov}x.log"
     threads:
-        2
+        1
     shell:
         "load-into-counting.py"
         " -N {params.N}"
@@ -299,7 +305,7 @@ rule kwip:
     log:
         "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
     threads:
-        4
+        1
     shell:
         "kwip"
         " {params.metric}"
@@ -319,30 +325,10 @@ rule kwip_stats:
     log:
         "data/{seed}/log/kwip-stats/{cov}x-{scale}.log"
     threads:
-        8
+        1
     shell:
         "kwip-stats"
         " -o {output}"
         " -t {threads}"
         " {input}"
         " >{log} 2>&1"
-
-
-# rule kwip_stats:
-#     input:
-#         expand("data/{seed}/hashes/{genome}-{sample}_{{cov}}x.ct.gz",
-#                genome=GENOMES, sample=SAMPLES)
-#     output:
-#         "data/{seed}/kwip/{kwip}/{cov}x.stat"
-#     params:
-#         kwip=lambda w: KWIPS[w.kwip],
-#     log:
-#         "data/{seed}/log/kwip-entvec/{kwip}/{cov}x.log"
-#     threads:
-#         24
-#     shell:
-#         "{params.kwip}"
-#         " -o {output}"
-#         " -t {threads}"
-#         " {input}"
-#         " >{log} 2>&1"
