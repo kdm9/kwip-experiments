@@ -52,18 +52,24 @@ def tree_distmat(nwkfile):
     return DistanceMatrix(totaldist, ids=tipnames)
 
 
-def sample_matrix_to_runs(dist, reps):
+def sample_matrix_to_runs(dist, reps=3):
     '''Repeats a distance matrix to expand samples to reps.'''
     runs = DistanceMatrix(
         np.repeat(np.repeat(dist.data, reps, axis=1), reps, axis=0))
-    runs.ids = ['{}-{}'.format(g, i+1) for g in dist.ids for i in range(reps)]
+    runs.ids = ['{}-{}'.format(g, i) for g in dist.ids for i in range(reps)]
     return runs
+
+
+def load_sample_matrix_to_runs(samplematfile, reps=3):
+    '''Loads a truth distance matrix between samples and expands to runs'''
+    samples = DistanceMatrix.read(samplematfile)
+    return sample_matrix_to_runs(samples, reps)
 
 def spearmans_rho_distmats(distmat, truthmat):
     '''Calculates spearman's ρ between truth and dist's values. returns ρ'''
     ids = list(sorted(distmat.ids))
     t_ids = list(sorted(truthmat.ids))
-    assert(ids == t_ids)
+    assert ids == t_ids, (ids, t_ids)
     dist  = distmat.filter(ids).condensed_form()
     truth = truthmat.filter(ids).condensed_form()
     sp = stats.spearmanr(truth, dist)
