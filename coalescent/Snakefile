@@ -64,7 +64,7 @@ labels = ["".join(x)
           for x in itl.product(ascii_uppercase, repeat=int(ceil(log(N, 26))))]
 
 GENOMES = [labels[i] for i in range(N)]
-SAMPLES = [str(i) for i in range(REPS)]
+SAMPLES = [str(i+1) for i in range(REPS)]
 
 
 # All sim params
