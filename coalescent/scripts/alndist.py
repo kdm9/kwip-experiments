@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from skbio import TreeNode, DistanceMatrix, TabularMSA, DNA
+from scipy.spatial.distance import hamming
 
 def aln_distmat(alignment, reps=3):
     '''Calculate pairwise distances from a MSA of genomes'''
