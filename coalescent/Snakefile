@@ -284,7 +284,8 @@ rule ilfq:
 
 rule hash:
     input:
-        "data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz"
+        r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
+        r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
         temp("data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"),
     params:
