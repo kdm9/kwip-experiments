@@ -10,6 +10,7 @@ import re
 def aln_distmat(alignment, reps=3):
     '''Calculate pairwise distances from a MSA of genomes'''
     aln = TabularMSA.read(alignment, constructor=DNA)
+    aln.reassign_index(minter="id")
     dist = DistanceMatrix.from_iterable([seq.values for seq in aln],
                                         metric=hamming, keys=aln.index)
     return dist
