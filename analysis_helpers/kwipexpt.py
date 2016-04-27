@@ -1,10 +1,8 @@
 import numpy as np
-import pandas as pd
 from scipy import stats
 from scipy.spatial.distance import hamming
 from skbio import TreeNode, DistanceMatrix, TabularMSA, DNA
 
-from os import path
 import re
 
 
@@ -40,8 +38,8 @@ def tree_distmat(nwkfile):
         partsum += partlen
         if tipnames is None:
             try:
-                tipnames = list(map(str,
-                                    sorted(int(x.name) for x in tree.tips())))
+                tipnames = list(map(
+                    str, sorted(int(x.name) for x in tree.tips())))
             except ValueError:
                 tipnames = list(sorted(x.name for x in tree.tips()))
         dist = tree.tip_tip_distances(tipnames).data
