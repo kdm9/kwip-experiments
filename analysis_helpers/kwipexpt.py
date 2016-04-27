@@ -7,6 +7,7 @@ from skbio import TreeNode, DistanceMatrix, TabularMSA, DNA
 from os import path
 import re
 
+
 def aln_distmat(alignment, reps=3):
     '''Calculate pairwise distances from a MSA of genomes'''
     aln = TabularMSA.read(alignment, constructor=DNA)
@@ -39,7 +40,8 @@ def tree_distmat(nwkfile):
         partsum += partlen
         if tipnames is None:
             try:
-                tipnames = list(map(str, sorted(int(x.name) for x in tree.tips())))
+                tipnames = list(map(str,
+                                    sorted(int(x.name) for x in tree.tips())))
             except ValueError:
                 tipnames = list(sorted(x.name for x in tree.tips()))
         dist = tree.tip_tip_distances(tipnames).data
@@ -65,30 +67,13 @@ def load_sample_matrix_to_runs(samplematfile, reps=3):
     samples = DistanceMatrix.read(samplematfile)
     return sample_matrix_to_runs(samples, reps)
 
+
 def spearmans_rho_distmats(distmat, truthmat):
     '''Calculates spearman's ρ between truth and dist's values. returns ρ'''
     ids = list(sorted(distmat.ids))
     t_ids = list(sorted(truthmat.ids))
     assert ids == t_ids, (ids, t_ids)
-    dist  = distmat.filter(ids).condensed_form()
+    dist = distmat.filter(ids).condensed_form()
     truth = truthmat.filter(ids).condensed_form()
     sp = stats.spearmanr(truth, dist)
     return sp.correlation
-
-
-def parse_stats(filename):
-    filename = path.splitext(path.basename(filename))[0]
-    cov, scale, measure = filename.split('-')
-    cov = cov.rstrip('x')
-    return {'coverage': float(cov),
-            'scale': float(scale),
-            'measure': measure}
-
-def get_table(treefile, distfiles, reps=3):
-    truth = get_truth(treefile, reps)
-    runs = []
-    for distfile in distfiles:
-        run = parse_stats(distfile)
-        run['spearman'] = get_spearmans(distfile, truth)
-        runs.append(run)
-    return pd.DataFrame(runs)
