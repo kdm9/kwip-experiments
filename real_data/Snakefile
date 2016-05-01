@@ -1,6 +1,6 @@
 HASH_SIZE = "5e9"
 METRICS = ['wip', 'ip']
-SETS = config['sets']
+SETS = config
 
 
 # No user serviceable bits below here
@@ -59,7 +59,7 @@ rule qcreads:
 
 rule hash:
     input:
-        "data/reads/{run}_qc_il.fastq.gz"
+        "data/reads/{run}_qc_il.fastq"
     output:
         "data/counts/{run}.ct.gz"
     params:
@@ -82,7 +82,7 @@ rule hash:
 
 rule kwip:
     input:
-        lambda wc: expand("data/counts/{run}.ct.gz", run=SETRUNS[wc.set])
+        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
     output:
         d="data/kwip/{set}_{metric}.dist",
         k="data/kwip/{set}_{metric}.kern"
@@ -104,7 +104,7 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        lambda wc: expand("data/counts/{run}.ct.gz", run=SETRUNS[wc.set])
+        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
     output:
         "data/kwip/{set}.stat"
     log:
