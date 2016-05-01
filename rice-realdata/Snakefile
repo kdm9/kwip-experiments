@@ -1,31 +1,20 @@
 HASH_SIZE = "5e9"
 METRICS = ['wip', 'ip']
-SETS = list(range(10))
+SETS = config['sets']
 
 
 # No user serviceable bits below here
-
-def runlist(setfile):
-    with open(setfile) as fh:
-        runs = filter(lambda w: len(w) > 0, map(str.strip, fh.readlines()))
-        return list(sorted(runs))
-
 ALLSAMPLES = set()
-SETRUNS = {}
-SETS = list(map(str, SETS))
-for s in SETS:
-    setfile = "sets/{}.txt".format(s)
-    runs = runlist(setfile)
+for setname, runs in SETS.items():
     for r in runs:
         ALLSAMPLES.add(r)
-    SETRUNS[s] = runs
+ALLSAMPLES = list(ALLSAMPLES)
+
 
 ## BEGIN RULES
-
 rule all:
     input:
-        expand("data/reads/{run}_qc_il.fastq.gz", run=ALLSAMPLES),
-        expand("data/kwip/{set}_{metric}.{mat}", set=SETS, metric=METRICS, mat=["dist", "kern"]),
+        expand("data/kwip/{set}_{metric}.{mat}", set=SETS.keys(), metric=METRICS, mat=["dist", "kern"]),
 
 rule clean:
     shell:
@@ -33,7 +22,7 @@ rule clean:
 
 rule sra:
     output:
-        temp("data/sra/{run}.sra"),
+        "data/sra/{run}.sra",
     log:
         "data/log/getrun/{run}.log"
     params:
@@ -49,7 +38,7 @@ rule qcreads:
     input:
         "data/sra/{run}.sra",
     output:
-        temp("data/reads/{run}_qc_il.fastq.gz")
+        temp("data/reads/{run}_qc_il.fastq")
     log:
         "data/log/qcreads/{run}.log"
     shell:
@@ -64,7 +53,7 @@ rule qcreads:
         "| trimit"
         "   -q 28"
         "   -" # stdin
-        "| gzip --fast >{output}"
+        ">{output}"
         ") 2>{log}"
 
 
@@ -102,7 +91,7 @@ rule kwip:
     log:
         "data/log/kwip/{set}-{metric}.log"
     threads:
-        8
+        16
     shell:
         "kwip"
         " {params.metric}"
@@ -121,7 +110,7 @@ rule kwip_stats:
     log:
         "data/log/kwip-stats/{set}.log"
     threads:
-        8
+        16
     shell:
         "kwip-stats"
         " -o {output}"
