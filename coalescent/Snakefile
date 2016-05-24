@@ -7,6 +7,7 @@ import random
 import re
 import json
 
+NEXP = 50   # number of reps
 Ne = 12     # Effective population size
 Nrecomb = 1 # Recombinations per generatiton per haplotype
 Nloci = 1   # Chromosomes
@@ -42,15 +43,17 @@ COV_VAR = [
 #    (50, 0.01),
 
 # Range of scales
-    (30, 0.1),
-    (30, 0.05),
-    (30, 0.02),
-   #(30, 0.01), From above
-    (30, 0.005),
-    (30, 0.001),
+    (10, 0.1),
+    (10, 0.06),
+    (10, 0.04),
+    (10, 0.02),
+    (10, 0.01),
+    (10, 0.006),
+    (10, 0.004),
+    (10, 0.002),
+    (10, 0.001),
 ]
 #DISABLED: Npop = 4    # populations
-NEXP = 100
 random.seed(3301)
 
 SEEDS = set()
