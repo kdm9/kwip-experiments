@@ -56,7 +56,7 @@ def sample_matrix_to_runs(dist, reps=3):
     '''Repeats a distance matrix to expand samples to reps.'''
     runs = DistanceMatrix(
         np.repeat(np.repeat(dist.data, reps, axis=1), reps, axis=0))
-    runs.ids = ['{}-{}'.format(g, i) for g in dist.ids for i in range(reps)]
+    runs.ids = ['{}-{}'.format(g, i+1) for g in dist.ids for i in range(reps)]
     return runs
 
 
