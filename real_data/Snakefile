@@ -34,15 +34,15 @@ rule sra:
         "   -i {wildcards.run}"
         " >{log} 2>&1"
 
-rule qcreads:
+rule reads:
     input:
         "data/sra/{run}.sra",
     output:
-        temp("data/reads/{run}_qc_il.fastq")
+        temp("data/tmp/reads/{run}_raw_il.fastq")
     log:
-        "data/log/qcreads/{run}.log"
+        "data/log/reads/{run}.log"
     shell:
-        "( fastq-dump"
+        "fastq-dump"
         "   --split-spot"
         "   --skip-technical"
         "   --stdout"
@@ -50,34 +50,67 @@ rule qcreads:
         "   --defline-seq '@$sn/$ri'"
         "   --defline-qual '+'"
         "   {input}"
-        "| trimit"
+        " >{output}"
+        " 2>{log}"
+
+rule sickle:
+    input:
+        "data/tmp/reads/{run}_raw_il.fastq"
+    output:
+        temp("data/tmp/reads_trimmed/{run}_il.fastq"),
+    log:
+        "data/log/sickle/{run}.log"
+    shell:
+        "sickle se"
+        "   -t sanger"
         "   -q 28"
-        "   -" # stdin
-        ">{output}"
-        ") 2>{log}"
+        "   -l 1"  # Keep all reads
+        "   -f {input}"
+        "   -o {output}"
+        " 2>{log} >&2"
+
+
+rule trimitreads:
+    input:
+        "data/tmp/reads/{run}_raw_il.fastq"
+    output:
+        r="data/reads/{run}_qc_il.fastq.gz",
+        yml="data/qc_reports/{run}.yml",
+    log:
+        "data/log/qcreads/{run}.log"
+    shell:
+        "( trimit"
+        "   -y {output.yml}"
+        "   -q 28"
+        "   {input}"
+        " | gzip --fast > {output.r})"
+        " 2>{log}"
 
 
 rule hash:
     input:
-        "data/reads/{run}_qc_il.fastq"
+        "data/tmp/reads_trimmed/{run}_il.fastq"
     output:
         "data/counts/{run}.ct.gz"
     params:
         x=HASH_SIZE,
         N='1',
         k='20',
+    threads:
+        4
     log:
         "data/log/counts/{run}.log"
     shell:
         "load-into-counting.py"
-        " -N {params.N}"
-        " -x {params.x}"
-        " -k {params.k}"
-        " -b"
-        " -s tsv"
-        " {output}"
-        " {input}"
-        " >{log} 2>&1"
+        "   -N {params.N}"
+        "   -x {params.x}"
+        "   -k {params.k}"
+        "   -T {threads}"
+        "   -b"
+        "   -s tsv"
+        "   {output}"
+        "   {input}"
+        "   >{log} 2>&1"
 
 
 rule kwip:
