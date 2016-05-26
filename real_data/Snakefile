@@ -34,15 +34,16 @@ rule sra:
         "   -i {wildcards.run}"
         " >{log} 2>&1"
 
-rule reads:
+
+rule sicklereads:
     input:
         "data/sra/{run}.sra",
     output:
-        temp("data/tmp/reads/{run}_raw_il.fastq")
+        temp("data/tmp/reads_trimmed/{run}_il.fastq"),
     log:
-        "data/log/reads/{run}.log"
+        "data/log/sickle/{run}.log"
     shell:
-        "fastq-dump"
+        "( fastq-dump"
         "   --split-spot"
         "   --skip-technical"
         "   --stdout"
@@ -50,41 +51,39 @@ rule reads:
         "   --defline-seq '@$sn/$ri'"
         "   --defline-qual '+'"
         "   {input}"
-        " >{output}"
-        " 2>{log}"
-
-rule sickle:
-    input:
-        "data/tmp/reads/{run}_raw_il.fastq"
-    output:
-        temp("data/tmp/reads_trimmed/{run}_il.fastq"),
-    log:
-        "data/log/sickle/{run}.log"
-    shell:
-        "sickle se"
+        " | sickle se"
         "   -t sanger"
         "   -q 28"
         "   -l 1"  # Keep all reads
-        "   -f {input}"
+        "   -f /dev/stdin"
+        "   -g" # zip them
         "   -o {output}"
-        " 2>{log} >&2"
+        ") >{log} 2>&1"
 
 
 rule trimitreads:
     input:
-        "data/tmp/reads/{run}_raw_il.fastq"
+        "data/sra/{run}.sra",
     output:
-        r="data/reads/{run}_qc_il.fastq.gz",
+        r="data/reads_trimit/{run}_qc_il.fastq.gz",
         yml="data/qc_reports/{run}.yml",
     log:
         "data/log/qcreads/{run}.log"
     shell:
-        "( trimit"
+        "( fastq-dump"
+        "   --split-spot"
+        "   --skip-technical"
+        "   --stdout"
+        "   --readids"
+        "   --defline-seq '@$sn/$ri'"
+        "   --defline-qual '+'"
+        "   {input}"
+        "| trimit"
         "   -y {output.yml}"
         "   -q 28"
-        "   {input}"
-        " | gzip --fast > {output.r})"
-        " 2>{log}"
+        "   -" # stdin
+        " | gzip --fast > {output.r}"
+        ") >{log} 2>&1"
 
 
 rule hash:
@@ -97,9 +96,11 @@ rule hash:
         N='1',
         k='20',
     threads:
-        4
+        1
     log:
         "data/log/counts/{run}.log"
+    priority:
+        10
     shell:
         "load-into-counting.py"
         "   -N {params.N}"
