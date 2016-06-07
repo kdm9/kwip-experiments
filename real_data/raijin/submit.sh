@@ -14,7 +14,7 @@ do
 #PBS -l ncpus=16
 #PBS -l walltime=24:00:00
 #PBS -P xe2
-#PBS -q express
+#PBS -q normal
 #PBS -l other=gdata1
 #PBS -l mem=126GB
 #PBS -l wd
@@ -25,12 +25,12 @@ source ~/.profile
 source /g/data1/xe2/.profile
 set -xe
 
-mkdir -p runs/$job
-cd runs/$job
-#rm -rf *
+workdir=/short/xe2/kwip-experiments/realdata/runs/$job
+mkdir -p $workdir
+cd $workdir
 mkdir -p data
 mkdir -p logs
-ln -s /g/data1/xe2/datasets/3000-rice/sra/ data/
+ln -s /g/data1/xe2/datasets/3000-rice/sra/ data/sra
 
 snakemake -j 16 --configfile $HERE/$cfg --snakefile $HERE/Snakefile >logs/${job}.log 2>&1
 EOF
