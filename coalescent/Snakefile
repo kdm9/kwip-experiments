@@ -13,9 +13,9 @@ Nrecomb = 1 # Recombinations per generatiton per haplotype
 Nloci = 1   # Chromosomes
 N = Ne      # number of samples from population
 REPS = 3    # Replicate runs per sample
-COVERAGE_CV = 0.3
+COVERAGE_CV = 0.01
 GENOME_SIZE = int(1e6)
-HASH_SIZE = "2e8"
+HASH_SIZE = "5e8"
 # Tuples of coverage, tree scale (variants per base from root to tip)
 COV_VAR = [
 # Range of coverages
