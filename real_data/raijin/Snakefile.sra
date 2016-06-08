@@ -5,27 +5,23 @@ for project, setruns in config.items():
     for setname, runs in setruns.items():
         for r in runs:
             ALLRUNS.add(r)
-ALLRUNS = list(ALLRUNS)
-PROJECT = []
-for run in ALLRUNS:
-    PROJECT.append(config['runprojects']['run'])
-
+            RUNPROJECTS[r] = project
 
 ## BEGIN RULES
+
 rule all:
     input:
-        expand("data/sra/{project}/{run}.sra", zip, PROJECT, ALLRUNS)
+        ["data/sra/{project}/{run}.sra".format(run=run, project=project) for run, project in RUNPROJECTS.items()]
 
 rule sra:
     output:
         "data/sra/{project}/{run}.sra",
     log:
-        "data/log/getrun/{run}.log"
+        "data/log/getrun/{project}-{run}.log"
     params:
-        srr=lambda w: w.run
     shell:
         "get-run.py"
-        "   -d data/sra"
+        "   -d data/sra/{wildcards.project}"
         "   -s "
         "   -i {wildcards.run}"
         " >{log} 2>&1"
