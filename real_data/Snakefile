@@ -14,6 +14,7 @@ ALLSAMPLES = list(ALLSAMPLES)
 ## BEGIN RULES
 rule all:
     input:
+        expand("data/sra/{run}.sra", run=ALLSAMPLES),
         expand("data/kwip/{set}_{metric}.{mat}", set=SETS.keys(), metric=METRICS, mat=["dist", "kern"]),
 
 rule clean:
@@ -51,12 +52,11 @@ rule sicklereads:
         "   --defline-seq '@$sn/$ri'"
         "   --defline-qual '+'"
         "   {input}"
-        " | sickle se"
+        "| sickle se"
         "   -t sanger"
         "   -q 28"
         "   -l 1"  # Keep all reads
         "   -f /dev/stdin"
-        "   -g" # zip them
         "   -o {output}"
         ") >{log} 2>&1"
 
@@ -82,7 +82,7 @@ rule trimitreads:
         "   -y {output.yml}"
         "   -q 28"
         "   -" # stdin
-        " | gzip --fast > {output.r}"
+        "| gzip --fast > {output.r}"
         ") >{log} 2>&1"
 
 
