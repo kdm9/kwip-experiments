@@ -1,20 +1,21 @@
 HASH_SIZE = "5e9"
 METRICS = ['wip', 'ip']
-SETS = config
-
-
-# No user serviceable bits below here
-ALLSAMPLES = set()
-for setname, runs in SETS.items():
-    for r in runs:
-        ALLSAMPLES.add(r)
-ALLSAMPLES = list(ALLSAMPLES)
+SETS = {}
+ALLRUNS = set()
+RUNPROJECTS = {}
+for project, setruns in config.items():
+    for setname, runs in setruns.items():
+        SETS[setname] = runs
+        for r in runs:
+            ALLRUNS.add(r)
+            RUNPROJECTS[r] = project
 
 
 ## BEGIN RULES
 rule all:
     input:
-        expand("data/sra/{run}.sra", run=ALLSAMPLES),
+        ["data/sra/{project}/{run}.sra".format(run=run, project=project)
+         for run, project in RUNPROJECTS.items()],
         expand("data/kwip/{set}_{metric}.{mat}", set=SETS.keys(), metric=METRICS, mat=["dist", "kern"]),
 
 rule clean:
@@ -23,26 +24,24 @@ rule clean:
 
 rule sra:
     output:
-        "data/sra/{run}.sra",
+        "data/sra/{project}/{run}.sra",
     log:
-        "data/log/getrun/{run}.log"
+        "data/log/getrun/{project}-{run}.log"
     params:
-        srr=lambda w: w.run
     shell:
         "get-run.py"
-        "   -d data/sra"
+        "   -d data/sra/{wildcards.project}"
         "   -s "
         "   -i {wildcards.run}"
         " >{log} 2>&1"
 
-
 rule sicklereads:
     input:
-        "data/sra/{run}.sra",
+        "data/sra/{project}/{run}.sra",
     output:
-        temp("data/tmp/reads_trimmed/{run}_il.fastq"),
+        temp("data/tmp/reads/{project}/{run}_il.fastq"),
     log:
-        "data/log/sickle/{run}.log"
+        "data/log/sickle/{project}-{run}.log"
     shell:
         "( fastq-dump"
         "   --split-spot"
@@ -61,36 +60,11 @@ rule sicklereads:
         ") >{log} 2>&1"
 
 
-rule trimitreads:
-    input:
-        "data/sra/{run}.sra",
-    output:
-        r="data/reads_trimit/{run}_qc_il.fastq.gz",
-        yml="data/qc_reports/{run}.yml",
-    log:
-        "data/log/qcreads/{run}.log"
-    shell:
-        "( fastq-dump"
-        "   --split-spot"
-        "   --skip-technical"
-        "   --stdout"
-        "   --readids"
-        "   --defline-seq '@$sn/$ri'"
-        "   --defline-qual '+'"
-        "   {input}"
-        "| trimit"
-        "   -y {output.yml}"
-        "   -q 28"
-        "   -" # stdin
-        "| gzip --fast > {output.r}"
-        ") >{log} 2>&1"
-
-
 rule hash:
     input:
-        "data/tmp/reads_trimmed/{run}_il.fastq"
+        "data/tmp/reads/{project}/{run}_il.fastq"
     output:
-        "data/counts/{run}.ct.gz"
+        "data/counts/{project}/{run}.ct.gz"
     params:
         x=HASH_SIZE,
         N='1',
@@ -98,7 +72,7 @@ rule hash:
     threads:
         1
     log:
-        "data/log/counts/{run}.log"
+        "data/log/counts/{project}-{run}.log"
     priority:
         10
     shell:
@@ -116,7 +90,8 @@ rule hash:
 
 rule kwip:
     input:
-        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
+        lambda wc: ["data/counts/{project}/{run}.ct.gz".format(project=RUNPROJECTS[r], run=r)
+                    for r in SETS[wc.set]]
     output:
         d="data/kwip/{set}_{metric}.dist",
         k="data/kwip/{set}_{metric}.kern"
@@ -138,7 +113,8 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        lambda wc: expand("data/counts/{run}.ct.gz", run=SETS[wc.set])
+        lambda wc: ["data/counts/{project}/{run}.ct.gz".format(project=RUNPROJECTS[r], run=r)
+                    for r in SETS[wc.set]]
     output:
         "data/kwip/{set}.stat"
     log:
