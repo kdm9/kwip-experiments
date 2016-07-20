@@ -40,6 +40,10 @@ for samp in SAMPLES:
         SUBSET_SEEDS[samp][cov] = str(random.randrange(10000, 100000))
 print(READ_NUMS)
 
+onsuccess:
+    shell("mail -s 'Workflow complete' kevin.murray@anu.edu.au < {log}")
+onerror:
+    shell("mail -s 'Workflow error' kevin.murray@anu.edu.au < {log}")
 
 ## BEGIN RULES
 rule all:
