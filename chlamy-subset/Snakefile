@@ -1,0 +1,178 @@
+from collections import defaultdict
+import random
+
+random.seed(3301)
+
+HASH_SIZE = "5e9"
+METRICS = ['wip', 'ip']
+SAMPLES = [
+    "SRR1734599", "SRR1734600", "SRR1734601", "SRR1734602",
+    "SRR1734603", "SRR1734604", "SRR1734607", "SRR1734608",
+    "SRR1734609", "SRR1734610", "SRR1734611", "SRR1734612",
+    "SRR1734613", "SRR1734614", "SRR1734615", "SRR1734616",
+    "SRR1734617", "SRR1734618", "SRR1734619", "SRR1734620",
+]
+
+GENOME_SIZE = 136e6 # 136 Mbp
+COVERAGES = [
+    0.5,
+    1,
+    2,
+    4,
+    8,
+    12,
+    15,
+    25,
+    50,
+    100,
+]
+COVERAGE_CV = 0.3
+
+# Precise read numbers
+READ_NUMS = defaultdict(dict)
+SUBSET_SEEDS = defaultdict(dict)
+for samp in SAMPLES:
+    for cov in COVERAGES:
+        exact_cov = random.gauss(cov, cov * COVERAGE_CV)
+        nread = int(max((exact_cov * GENOME_SIZE) / 200, 100))
+        cov = str(cov)
+        READ_NUMS[samp][cov] = str(nread)
+        SUBSET_SEEDS[samp][cov] = str(random.randrange(10000, 100000))
+print(READ_NUMS)
+
+onsuccess:
+    shell("mail -s 'Workflow complete' kevin.murray@anu.edu.au < {log}")
+onerror:
+    shell("mail -s 'Workflow error' kevin.murray@anu.edu.au < {log}")
+
+## BEGIN RULES
+rule all:
+    input:
+        expand("data/kwip/{cov}x_{metric}.{mat}", cov=COVERAGES,
+               metric=METRICS, mat=["dist", "kern"]),
+
+rule clean:
+    shell:
+        "rm -rf data .snakemake"
+
+rule sra:
+    output:
+        "data/sra/{run}.sra",
+    log:
+        "data/log/getrun/{run}.log"
+    shell:
+        "get-run.py"
+        "   -d data/sra/"
+        "   -s "
+        "   -i {wildcards.run}"
+        ">{log} 2>&1"
+
+rule sicklereads:
+    input:
+        "data/sra/{run}.sra",
+    output:
+        temp("data/tmp/reads/{run}_il.fastq"),
+    log:
+        "data/log/sickle-{run}.log"
+    shell:
+        "( fastq-dump"
+        "   --split-spot"
+        "   --skip-technical"
+        "   --stdout"
+        "   --readids"
+        "   --defline-seq '@$sn/$ri'"
+        "   --defline-qual '+'"
+        "   {input}"
+        "| sickle se"
+        "   -t sanger"
+        "   -q 28"
+        "   -l 1"  # Keep all reads
+        "   -f /dev/stdin"
+        "   -o {output}"
+        ") >{log} 2>&1"
+
+
+rule subset:
+    input:
+        "data/tmp/reads/{run}_il.fastq",
+    output:
+        "data/reads_subset/{cov}x-{run}_il.fastq",
+    params:
+        nread=lambda w: READ_NUMS[w.run][w.cov],
+        seed=lambda w: SUBSET_SEEDS[w.run][w.cov],
+    log:
+        "data/log/subset/{cov}x-{run}.log"
+    shell:
+        "seqtk sample"
+        "   -2"
+        "   -s {params.seed}"
+        "   {input}"
+        "   {params.nread}"
+        ">{output}"
+
+
+rule hash:
+    input:
+        "data/reads_subset/{cov}x-{run}_il.fastq"
+    output:
+        "data/counts/{cov}x-{run}.ct.gz"
+    params:
+        x=HASH_SIZE,
+        N='1',
+        k='20',
+    threads:
+        1
+    log:
+        "data/log/counts-{cov}x-{run}.log"
+    priority:
+        10
+    shell:
+        "load-into-counting.py"
+        "   -N {params.N}"
+        "   -x {params.x}"
+        "   -k {params.k}"
+        "   -T {threads}"
+        "   -b"
+        "   -s tsv"
+        "   {output}"
+        "   {input}"
+        "   >{log} 2>&1"
+
+
+rule kwip:
+    input:
+        expand("data/counts/{{cov}}x-{run}.ct.gz", run=SAMPLES),
+    output:
+        d="data/kwip/{cov}x_{metric}.dist",
+        k="data/kwip/{cov}x_{metric}.kern"
+    params:
+        metric=lambda w: '-U' if w.metric == 'ip' else '',
+    log:
+        "data/log/kwip/{cov}x-{metric}.log"
+    threads:
+        16
+    shell:
+        "kwip"
+        " {params.metric}"
+        " -d {output.d}"
+        " -k {output.k}"
+        " -t {threads}"
+        " {input}"
+        " >{log} 2>&1"
+
+
+rule kwip_stats:
+    input:
+        expand("data/counts/{{cov}}x-{run}.ct.gz", run=SAMPLES),
+    output:
+        "data/kwip/{cov}x.stat"
+    log:
+        "data/log/kwip-stats/{cov}x.log"
+    threads:
+        16
+    shell:
+        "kwip-stats"
+        " -o {output}"
+        " -t {threads}"
+        " {input}"
+        " >{log} 2>&1"
