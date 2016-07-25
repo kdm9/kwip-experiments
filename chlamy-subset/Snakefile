@@ -1,7 +1,7 @@
 from collections import defaultdict
 import random
 
-random.seed(3301)
+random.seed(1597)
 
 HASH_SIZE = "5e9"
 METRICS = ['wip', 'ip']
