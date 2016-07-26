@@ -15,6 +15,8 @@ SAMPLES = [
 
 GENOME_SIZE = 136e6 # 136 Mbp
 COVERAGES = [
+    0.01,
+    0.1,
     0.5,
     1,
     2,
@@ -24,9 +26,13 @@ COVERAGES = [
     15,
     25,
     50,
+    75,
     100,
+    150,
+    200,
 ]
-COVERAGE_CV = 0.3
+# Calculated from the original data
+COVERAGE_CV = 0.12
 
 # Precise read numbers
 READ_NUMS = defaultdict(dict)
