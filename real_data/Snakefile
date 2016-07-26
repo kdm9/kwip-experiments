@@ -10,6 +10,11 @@ for project, setruns in config.items():
             ALLRUNS.add(r)
             RUNPROJECTS[r] = project
 
+onsuccess:
+    shell("mail -s 'Workflow complete' kevin.murray@anu.edu.au < {log}")
+onerror:
+    shell("mail -s 'Workflow error' kevin.murray@anu.edu.au < {log}")
+
 
 ## BEGIN RULES
 rule all:
