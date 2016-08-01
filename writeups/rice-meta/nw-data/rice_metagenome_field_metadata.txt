@@ -1,0 +1,188 @@
+SampleID	Site	Compartment	Run	Cultivation	Description
+JE_Lundberg_1	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.1
+JE_Lundberg_2	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.1
+JE_Lundberg_3	Ditaler 18	Endosphere	1	Organic	Endosphere_1.1
+JE_Lundberg_4	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.2
+JE_Lundberg_5	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.2
+JE_Lundberg_6	Ditaler 18	Endosphere	1	Organic	Endosphere_1.2
+JE_Lundberg_7	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.3
+JE_Lundberg_8	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.3
+JE_Lundberg_9	Ditaler 18	Endosphere	1	Organic	Endosphere_1.3
+JE_Lundberg_10	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.4
+JE_Lundberg_11	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.4
+JE_Lundberg_12	Ditaler 18	Endosphere	1	Organic	Endosphere_1.4
+JE_Lundberg_13	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.5
+JE_Lundberg_15	Ditaler 18	Endosphere	1	Organic	Endosphere_1.5
+JE_Lundberg_16	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.6
+JE_Lundberg_17	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.6
+JE_Lundberg_18	Ditaler 18	Endosphere	1	Organic	Endosphere_1.6
+JE_Lundberg_19	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.7
+JE_Lundberg_20	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.7
+JE_Lundberg_21	Ditaler 18	Endosphere	1	Organic	Endosphere_1.7
+JE_Lundberg_22	Ditaler 18	Rhizosphere	1	Organic	Rhizosphere_1.8
+JE_Lundberg_23	Ditaler 18	Rhizoplane	1	Organic	Rhizoplane_1.8
+JE_Lundberg_24	Ditaler 18	Endosphere	1	Organic	Endosphere_1.8
+JE_Lundberg_25	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.1
+JE_Lundberg_26	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.1
+JE_Lundberg_27	Ditaler 19	Endosphere	2	Organic	Endosphere_2.1
+JE_Lundberg_28	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.2
+JE_Lundberg_29	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.2
+JE_Lundberg_30	Ditaler 19	Endosphere	2	Organic	Endosphere_2.2
+JE_Lundberg_31	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.3
+JE_Lundberg_32	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.3
+JE_Lundberg_33	Ditaler 19	Endosphere	2	Organic	Endosphere_2.3
+JE_Lundberg_34	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.4
+JE_Lundberg_35	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.4
+JE_Lundberg_36	Ditaler 19	Endosphere	2	Organic	Endosphere_2.4
+JE_Lundberg_37	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.5
+JE_Lundberg_38	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.5
+JE_Lundberg_39	Ditaler 19	Endosphere	2	Organic	Endosphere_2.5
+JE_Lundberg_40	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.6
+JE_Lundberg_41	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.6
+JE_Lundberg_42	Ditaler 19	Endosphere	2	Organic	Endosphere_2.6
+JE_Lundberg_43	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.7
+JE_Lundberg_44	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.7
+JE_Lundberg_45	Ditaler 19	Endosphere	2	Organic	Endosphere_2.7
+JE_Lundberg_46	Ditaler 19	Rhizosphere	2	Organic	Rhizosphere_2.8
+JE_Lundberg_47	Ditaler 19	Rhizoplane	2	Organic	Rhizoplane_2.8
+JE_Lundberg_48	Ditaler 19	Endosphere	2	Organic	Endosphere_2.8
+JE_Lundberg_49	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.1
+JE_Lundberg_50	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.1
+JE_Lundberg_51	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.1
+JE_Lundberg_52	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.2
+JE_Lundberg_53	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.2
+JE_Lundberg_54	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.2
+JE_Lundberg_55	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.3
+JE_Lundberg_56	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.3
+JE_Lundberg_57	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.3
+JE_Lundberg_58	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.4
+JE_Lundberg_59	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.4
+JE_Lundberg_60	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.4
+JE_Lundberg_61	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.5
+JE_Lundberg_62	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.5
+JE_Lundberg_63	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.5
+JE_Lundberg_64	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.6
+JE_Lundberg_65	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.6
+JE_Lundberg_66	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.6
+JE_Lundberg_67	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.7
+JE_Lundberg_68	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.7
+JE_Lundberg_69	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.7
+JE_Lundberg_70	Spooner Airstrip	Rhizosphere	1	EcoFarm	Rhizosphere_3.8
+JE_Lundberg_71	Spooner Airstrip	Rhizoplane	1	EcoFarm	Rhizoplane_3.8
+JE_Lundberg_72	Spooner Airstrip	Endosphere	1	EcoFarm	Endosphere_3.8
+JE_Lundberg_73	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.1
+JE_Lundberg_74	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.1
+JE_Lundberg_75	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.1
+JE_Lundberg_76	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.2
+JE_Lundberg_77	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.2
+JE_Lundberg_78	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.2
+JE_Lundberg_79	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.3
+JE_Lundberg_80	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.3
+JE_Lundberg_81	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.3
+JE_Lundberg_82	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.4
+JE_Lundberg_84	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.4
+JE_Lundberg_85	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.5
+JE_Lundberg_86	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.5
+JE_Lundberg_87	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.5
+JE_Lundberg_88	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.6
+JE_Lundberg_89	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.6
+JE_Lundberg_90	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.6
+JE_Lundberg_91	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.7
+JE_Lundberg_92	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.7
+JE_Lundberg_93	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.7
+JE_Lundberg_94	SFT 20 A	Rhizosphere	2	EcoFarm	Rhizosphere_4.8
+JE_Lundberg_95	SFT 20 A	Rhizoplane	2	EcoFarm	Rhizoplane_4.8
+JE_Lundberg_96	SFT 20 A	Endosphere	2	EcoFarm	Endosphere_4.8
+JE_Lundberg_97	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.1
+JE_Lundberg_98	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.1
+JE_Lundberg_99	DS RR	Endosphere	1	EcoFarm	Endosphere_5.1
+JE_Lundberg_100	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.2
+JE_Lundberg_101	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.2
+JE_Lundberg_102	DS RR	Endosphere	1	EcoFarm	Endosphere_5.2
+JE_Lundberg_103	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.3
+JE_Lundberg_104	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.3
+JE_Lundberg_105	DS RR	Endosphere	1	EcoFarm	Endosphere_5.3
+JE_Lundberg_106	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.4
+JE_Lundberg_107	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.4
+JE_Lundberg_108	DS RR	Endosphere	1	EcoFarm	Endosphere_5.4
+JE_Lundberg_109	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.5
+JE_Lundberg_110	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.5
+JE_Lundberg_111	DS RR	Endosphere	1	EcoFarm	Endosphere_5.5
+JE_Lundberg_112	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.6
+JE_Lundberg_113	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.6
+JE_Lundberg_114	DS RR	Endosphere	1	EcoFarm	Endosphere_5.6
+JE_Lundberg_115	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.7
+JE_Lundberg_116	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.7
+JE_Lundberg_117	DS RR	Endosphere	1	EcoFarm	Endosphere_5.7
+JE_Lundberg_118	DS RR	Rhizosphere	1	EcoFarm	Rhizosphere_5.8
+JE_Lundberg_119	DS RR	Rhizoplane	1	EcoFarm	Rhizoplane_5.8
+JE_Lundberg_120	DS RR	Endosphere	1	EcoFarm	Endosphere_5.8
+JE_Lundberg_121	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.1
+JE_Lundberg_122	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.1
+JE_Lundberg_123	BB P1	Endosphere	1	Organic	Endosphere_6.1
+JE_Lundberg_124	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.2
+JE_Lundberg_125	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.2
+JE_Lundberg_126	BB P1	Endosphere	1	Organic	Endosphere_6.2
+JE_Lundberg_127	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.3
+JE_Lundberg_128	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.3
+JE_Lundberg_129	BB P1	Endosphere	1	Organic	Endosphere_6.3
+JE_Lundberg_130	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.4
+JE_Lundberg_131	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.4
+JE_Lundberg_132	BB P1	Endosphere	1	Organic	Endosphere_6.4
+JE_Lundberg_133	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.5
+JE_Lundberg_134	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.5
+JE_Lundberg_135	BB P1	Endosphere	1	Organic	Endosphere_6.5
+JE_Lundberg_136	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.6
+JE_Lundberg_137	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.6
+JE_Lundberg_138	BB P1	Endosphere	1	Organic	Endosphere_6.6
+JE_Lundberg_139	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.7
+JE_Lundberg_140	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.7
+JE_Lundberg_141	BB P1	Endosphere	1	Organic	Endosphere_6.7
+JE_Lundberg_142	BB P1	Rhizosphere	1	Organic	Rhizosphere_6.8
+JE_Lundberg_143	BB P1	Rhizoplane	1	Organic	Rhizoplane_6.8
+JE_Lundberg_144	BB P1	Endosphere	1	Organic	Endosphere_6.8
+JE_Lundberg_145	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.1
+JE_Lundberg_146	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.1
+JE_Lundberg_147	BB P4	Endosphere	2	Organic	Endosphere_7.1
+JE_Lundberg_148	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.2
+JE_Lundberg_149	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.2
+JE_Lundberg_150	BB P4	Endosphere	2	Organic	Endosphere_7.2
+JE_Lundberg_151	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.3
+JE_Lundberg_152	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.3
+JE_Lundberg_153	BB P4	Endosphere	2	Organic	Endosphere_7.3
+JE_Lundberg_154	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.4
+JE_Lundberg_155	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.4
+JE_Lundberg_156	BB P4	Endosphere	2	Organic	Endosphere_7.4
+JE_Lundberg_157	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.5
+JE_Lundberg_158	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.5
+JE_Lundberg_159	BB P4	Endosphere	2	Organic	Endosphere_7.5
+JE_Lundberg_160	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.6
+JE_Lundberg_161	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.6
+JE_Lundberg_162	BB P4	Endosphere	2	Organic	Endosphere_7.6
+JE_Lundberg_163	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.7
+JE_Lundberg_164	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.7
+JE_Lundberg_165	BB P4	Endosphere	2	Organic	Endosphere_7.7
+JE_Lundberg_166	BB P4	Rhizosphere	2	Organic	Rhizosphere_7.8
+JE_Lundberg_167	BB P4	Rhizoplane	2	Organic	Rhizoplane_7.8
+JE_Lundberg_168	BB P4	Endosphere	2	Organic	Endosphere_7.8
+JE_Lundberg_169	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.1
+JE_Lundberg_170	Scheidec	Rhizoplane	2	Organic	Rhizoplane_8.1
+JE_Lundberg_171	Scheidec	Endosphere	2	Organic	Endosphere_8.1
+JE_Lundberg_172	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.2
+JE_Lundberg_173	Scheidec	Rhizoplane	2	Organic	Rhizoplane_8.2
+JE_Lundberg_174	Scheidec	Endosphere	2	Organic	Endosphere_8.2
+JE_Lundberg_175	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.3
+JE_Lundberg_176	Scheidec	Rhizoplane	2	Organic	Rhizoplane_8.3
+JE_Lundberg_177	Scheidec	Endosphere	2	Organic	Endosphere_8.3
+JE_Lundberg_178	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.4
+JE_Lundberg_180	Scheidec	Endosphere	2	Organic	Endosphere_8.4
+JE_Lundberg_181	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.5
+JE_Lundberg_182	Scheidec	Rhizoplane	2	Organic	Rhizoplane_8.5
+JE_Lundberg_183	Scheidec	Endosphere	2	Organic	Endosphere_8.5
+JE_Lundberg_186	Scheidec	Endosphere	2	Organic	Endosphere_8.6
+JE_Lundberg_187	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.7
+JE_Lundberg_188	Scheidec	Rhizoplane	2	Organic	Rhizoplane_8.7
+JE_Lundberg_189	Scheidec	Endosphere	2	Organic	Endosphere_8.7
+JE_Lundberg_190	Scheidec	Rhizosphere	2	Organic	Rhizosphere_8.8
+JE_Lundberg_191	Scheidec	Rhizoplane	2	Organic	Rhizoplane_8.8
+JE_Lundberg_192	Scheidec	Endosphere	2	Organic	Endosphere_8.8
