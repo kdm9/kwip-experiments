@@ -42,7 +42,7 @@ def tree_distmat(nwkfile):
                     str, sorted(int(x.name) for x in tree.tips())))
             except ValueError:
                 tipnames = list(sorted(x.name for x in tree.tips()))
-        dist = tree.tip_tip_distances(tipnames).data
+        dist = tree.tip_tip_distances(tipnames).datajj
         if totaldist is None:
             totaldist = np.zeros_like(dist)
         partdist.append((partlen, dist))
@@ -66,12 +66,10 @@ def load_sample_matrix_to_runs(samplematfile, reps=3):
     return sample_matrix_to_runs(samples, reps)
 
 
-def spearmans_rho_distmats(distmat, truthmat):
-    '''Calculates spearman's ρ between truth and dist's values. returns ρ'''
+def distmat_corr(truthmat, distmat, corrstat):
     ids = list(sorted(distmat.ids))
     t_ids = list(sorted(truthmat.ids))
     assert ids == t_ids, (ids, t_ids)
     dist = distmat.filter(ids).condensed_form()
     truth = truthmat.filter(ids).condensed_form()
-    sp = stats.spearmanr(truth, dist)
-    return sp.correlation
+    return corrstat(truth, dist)
