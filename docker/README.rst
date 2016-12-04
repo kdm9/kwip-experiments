@@ -26,6 +26,5 @@ This contains the following software:
 - seqan's mason2 simulator
 - scientific python stack (np, mpl, scipy, pandas, jupyter etc)
 - scikit-bio
-- pycogent
 - ete
 - snakemake

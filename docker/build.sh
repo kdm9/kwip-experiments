@@ -7,12 +7,19 @@ declare -A VERS
 VERS[snakemake]=3.8.2
 VERS[khmer]=2.0
 VERS[skbio]=0.5.1
-VERS[ete3]=3.0.0b36
+VERS[ete3]=3.0.0b35
 VERS[scrm]=1.7.2
 VERS[mason2]=2.0.5
 VERS[dawg]=f9ebcd8cff   # This commit was the dev HEAD for initial experiments
 VERS[trimit]=0.2.5
 VERS[kwip]=0.2.0
+
+## More about DAWG version:
+# We require features from the develop branch of DAWG, which will become dawg2.
+# While it was not when these experiments were written, this tool is now under
+# active development, making it no longer possible to simply use the develop
+# branch reproducibly. Therefore, we use the state that the develop branch was
+# in when these experiments started.
 
 
 ################################################################################
@@ -24,6 +31,7 @@ apt-get update -yy
 apt-get upgrade -yy
 
 apt-get install -yy              \
+    vim                          \
     curl                         \
     build-essential              \
     cmake                        \
@@ -33,20 +41,18 @@ apt-get install -yy              \
     libbz2-dev                   \
     libgsl-dev                   \
     zlib1g-dev                   \
+    cython3                      \
     python3-dev                  \
     python3-pip                  \
+    python3-numpy                \
+    python3-scipy                \
+    python3-docopt               \
+    python3-matplotlib           \
 
 
 ################################################################################
 #                                     Pip                                      #
 ################################################################################
-
-pip3 install   \
-    cython     \
-    numpy      \
-    scipy      \
-    matplotlib \
-    docopt     \
 
 pip3 install --pre                \
     snakemake==${VERS[snakemake]} \
@@ -95,6 +101,7 @@ mkdir -p build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=..
 make all install
 mv ../bin/dawg /usr/local/bin/dawg2
+mv ../lib/* /usr/local/lib
 cd ../..
 rm -rf /usr/local/src/*
 unset tarname
@@ -114,31 +121,34 @@ tar xvf trimit_${VERS[trimit]}_amd64.tar.gz -C /usr/local --strip-components=1
 #  kWIP  #
 ##########
 
-tarname=kwip_${VERS[kwip]}.tar.gz
+tarname=kWIP_${VERS[kwip]}.tar.gz
 curl -LS -o $tarname \
     https://github.com/kdmurray91/kWIP/archive/${VERS[kwip]}.tar.gz
 tar xvf $tarname
-cd kwip-${VERS[kwip]}/
+cd kWIP-${VERS[kwip]}/
 mkdir build && cd build
 cmake ..
 make all install
+make test
 rm -rf /usr/local/src/*
 
 ################################################################################
 #                                   Cleanup                                    #
 ################################################################################
 
-apt-get remove -yy  \
-    curl            \
-    build-essential \
-    cmake           \
-    pkg-config      \
-    libboost-dev    \
-    libbz2-dev      \
-    libgsl-dev      \
-    zlib1g-dev      \
-    python3-dev     \
+apt-get purge -yy      \
+    curl               \
+    build-essential    \
+    cmake              \
+    pkg-config         \
+    libboost-dev       \
+    libbz2-dev         \
+    libgsl-dev         \
+    zlib1g-dev         \
+    python3-dev        \
+    python3-matplotlib \
 
 apt-get autoremove -y
 apt-get clean -y
 rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* /usr/share/locale/*
+rm -rf /root/.cache
