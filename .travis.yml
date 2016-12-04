@@ -9,4 +9,4 @@ install:
   - docker build --tag kwip-experiments docker
 
 script:
-  - docker run -it -v $PWD:/experiments kwip-experiments 'cd /experiments/coalescent && snakemake -j2 -p --configfile configs/tiny_ci.yml'
+  - docker run -it -v $PWD:/experiments kwip-experiments bash -c 'cd /experiments/coalescent && snakemake -j2 -p --configfile configs/tiny_ci.yml'
