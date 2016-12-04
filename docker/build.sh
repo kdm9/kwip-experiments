@@ -48,6 +48,7 @@ apt-get install -yy              \
     python3-scipy                \
     python3-docopt               \
     python3-matplotlib           \
+    python3-yaml                 \
 
 
 ################################################################################
