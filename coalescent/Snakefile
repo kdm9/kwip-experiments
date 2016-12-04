@@ -7,57 +7,14 @@ import random
 import re
 import json
 
-NEXP = 50   # number of reps
-Ne = 12     # Effective population size
-Nrecomb = 1 # Recombinations per generatiton per haplotype
-Nloci = 1   # Chromosomes
-N = Ne      # number of samples from population
-REPS = 3    # Replicate runs per sample
-COVERAGE_CV = 0.01
-GENOME_SIZE = int(1e6)
-HASH_SIZE = "5e8"
-# Tuples of coverage, tree scale (variants per base from root to tip)
-COV_VAR = [
-# Range of coverages
-    (0.5, 0.001),
-    (1, 0.001),
-    (2, 0.001),
-    (4, 0.001),
-    (8, 0.001),
-    (12, 0.001),
-    (15, 0.001),
-    (30, 0.001),
-    (50, 0.001),
-    (100, 0.001),
-    (200, 0.001),
+random.seed(int(config['seed']))
 
+N = config["population_size"]
+COV_VAR = [(d['cov'], d['var']) for d in config["coverage_variablity"]]
 
-#    (0.5, 0.01),
-#    (1, 0.01),
-#    (2, 0.01),
-#    (4, 0.01),
-#    (8, 0.01),
-#    (12, 0.01),
-#    (15, 0.01),
-#    (30, 0.01),
-#    (50, 0.01),
-
-# Range of scales
-    (10, 0.1),
-    (10, 0.06),
-    (10, 0.04),
-    (10, 0.02),
-    (10, 0.01),
-    (10, 0.006),
-    (10, 0.004),
-    (10, 0.002),
-    (10, 0.001),
-]
-#DISABLED: Npop = 4    # populations
-random.seed(3301)
 
 SEEDS = set()
-while len(SEEDS) < NEXP:
+while len(SEEDS) < int(config["num_replicates"]):
     SEEDS.add(random.randrange(1e4))
 SEEDS = list(SEEDS)
 print(SEEDS)
@@ -67,22 +24,22 @@ labels = ["".join(x)
           for x in itl.product(ascii_uppercase, repeat=int(ceil(log(N, 26))))]
 
 GENOMES = [labels[i] for i in range(N)]
-SAMPLES = [str(i+1) for i in range(REPS)]
+SAMPLES = [str(i+1) for i in range(config['runs_per_sample'])]
 
 
 # All sim params
 READ_NUMS = {}
 SCALES = set()
 for seed in SEEDS:
-    random.seed(seed)
+    random.seed(int(seed))
     readnum = {}
     for g in GENOMES:
         readnum[g] = {}
         for s in SAMPLES:
             readnum[g][str(s)] = {}
             for c, v in COV_VAR:
-                cov = random.gauss(c, c * COVERAGE_CV)
-                nread = max((cov * GENOME_SIZE) / 200, 100)
+                cov = random.gauss(c, c * int(config["coverage_cv"]))
+                nread = max((cov * config["genome_size"]) / 200, 100)
                 try:
                     readnum[g][str(s)][str(c)][str(v)] = int(nread)
                 except KeyError:
@@ -117,8 +74,8 @@ rule clean:
 
 
 def scrm_args(wc):
-    args = "{:d} {:d} ".format(Ne, Nloci)
-    #args += "-r {:d} {:d} ".format(Ne * Nrecomb, GENOME_SIZE)
+    args = "{:d} {:d} ".format(config['population_size'], config['num_chroms'])
+    #args += "-r {:d} {:d} ".format(Ne * Nrecomb, config['genome_size'])
     args += "-T "
     return args
 
@@ -181,7 +138,7 @@ rule paramfile:
                 if m:
                     length, tree = m.groups()
                 else:
-                    length = str(GENOME_SIZE)
+                    length = str(config['genome_size'])
                     tree = treeline
                 dawg += '''
                 [[-]]
@@ -279,10 +236,6 @@ rule ilfq:
         " {input.r2}"
         " 2>>{log}"
         " > {output}"
-#        " | trimit"
-#        " -q 28"
-#        " 2>/dev/null"
-#        " | gzip --fast"
 
 
 rule hash:
@@ -290,9 +243,9 @@ rule hash:
         r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
         r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
-        temp("data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct.gz"),
+        temp("data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct"),
     params:
-        x=HASH_SIZE,
+        x=config['sketch_size'],
         N='1',
         k='20',
     log:
@@ -314,7 +267,7 @@ rule hash:
 
 rule kwip:
     input:
-        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
+        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct",
                genome=GENOMES, sample=SAMPLES),
     output:
         d="data/{seed}/kwip/{cov}x-{scale}-{metric}.dist",
@@ -337,7 +290,7 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
+        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct",
                genome=GENOMES, sample=SAMPLES),
     output:
         "data/{seed}/kwip/{cov}x-{scale}.stat"
