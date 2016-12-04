@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -xeuo pipefail
 
 # Tool versions
 declare -A VERS
@@ -12,45 +12,54 @@ VERS[scrm]=1.7.2
 VERS[mason2]=2.0.5
 VERS[dawg]=f9ebcd8cff   # This commit was the dev HEAD for initial experiments
 VERS[trimit]=0.2.5
+VERS[kwip]=0.2.0
 
 
-apt-get update
+################################################################################
+#                                 Apt packages                                 #
+################################################################################
+
+sed -i -e 's/archive.ubuntu.com/au.archive.ubuntu.com/' /etc/apt/sources.list
+apt-get update -yy
 apt-get upgrade -yy
-apt-get install -yy           \
- curl                         \
- build-essential              \
- cmake                        \
- pkg-config                   \
- libboost-dev                 \
- libboost-program-options-dev \
- libbz2-dev                   \
- libgsl-dev                   \
- zlib1g-dev                   \
- python3-dev                  \
- python3-pip                  \
 
-# bison                        \
-# flex                         \
+apt-get install -yy              \
+    curl                         \
+    build-essential              \
+    cmake                        \
+    pkg-config                   \
+    libboost-dev                 \
+    libboost-program-options-dev \
+    libbz2-dev                   \
+    libgsl-dev                   \
+    zlib1g-dev                   \
+    python3-dev                  \
+    python3-pip                  \
 
-pip3 install cython     \
-             numpy      \
-             scipy      \
-             matplotlib \
-             docopt     \
 
-pip3 install --pre                         \
-             snakemake==${VERS[snakemake]} \
-             khmer==${VERS[khmer]}         \
-             scikit-bio=${VERS[khmer]}     \
-             ete3==${VERS[ete3]}           \
+################################################################################
+#                                     Pip                                      #
+################################################################################
+
+pip3 install   \
+    cython     \
+    numpy      \
+    scipy      \
+    matplotlib \
+    docopt     \
+
+pip3 install --pre                \
+    snakemake==${VERS[snakemake]} \
+    khmer==${VERS[khmer]}         \
+    scikit-bio==${VERS[skbio]}    \
+    ete3==${VERS[ete3]}           \
+
 
 ################################################################################
 #                            Source/binary tarballs                            #
 ################################################################################
 
-
 cd /usr/local/src
-
 
 ##########
 #  SCRM  #
@@ -59,6 +68,7 @@ cd /usr/local/src
 # Downloads static binary directly
 curl -LS -o /usr/local/bin/scrm \
     https://github.com/scrm/scrm/releases/download/v${VERS[scrm]}/scrm-x64-static
+chmod +x /usr/local/bin/scrm
 
 
 ############
@@ -117,6 +127,17 @@ rm -rf /usr/local/src/*
 ################################################################################
 #                                   Cleanup                                    #
 ################################################################################
+
+apt-get remove -yy  \
+    curl            \
+    build-essential \
+    cmake           \
+    pkg-config      \
+    libboost-dev    \
+    libbz2-dev      \
+    libgsl-dev      \
+    zlib1g-dev      \
+    python3-dev     \
 
 apt-get autoremove -y
 apt-get clean -y
