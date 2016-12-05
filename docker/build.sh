@@ -49,6 +49,9 @@ apt-get install -yy              \
     python3-docopt               \
     python3-matplotlib           \
     python3-yaml                 \
+    python3-six                  \
+    python3-tz                   \
+    python3-dateutil             \
 
 
 ################################################################################
@@ -92,7 +95,7 @@ rm -rf /usr/local/src/*
 #  Dawg Development Release  #
 ##############################
 
-tarname=dawg_${VERS[dawg]}.tar.gz 
+tarname=dawg_${VERS[dawg]}.tar.gz
 # Install dawg2
 curl -LS -o ${tarname}  \
     https://github.com/reedacartwright/dawg/archive/${VERS[dawg]}.tar.gz
@@ -147,7 +150,6 @@ apt-get purge -yy      \
     libgsl-dev         \
     zlib1g-dev         \
     python3-dev        \
-    python3-matplotlib \
 
 apt-get autoremove -y
 apt-get clean -y
