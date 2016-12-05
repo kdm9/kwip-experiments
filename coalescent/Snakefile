@@ -54,18 +54,18 @@ METRICS = ['wip', 'ip']
 rule all:
     input:
         expand("data/{seed}/all_genomes-{scale}.dist", seed=SEEDS, scale=SCALES),
-        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
+        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz-{cov}x-{scale}.stat", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS),
-        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+               sketch_size=config["sketch_sizes"], seed=SEEDS),
+        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz-{cov}x-{scale}-{{metric}}.{{ext}}", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
-        expand(expand("data/{{seed}}/kwip/{cov}x-{scale}.stat", zip,
+               sketch_size=config["sketch_sizes"], seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
+        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz-{cov}x-{scale}.stat", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
-               seed=SEEDS),
+               sketch_size=config["sketch_sizes"], seed=SEEDS),
 
 
 rule clean:
@@ -243,13 +243,13 @@ rule hash:
         r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
         r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
-        temp("data/{seed}/hashes/{cov}x-{scale}/{genome}-{sample}.ct"),
+        temp("data/{seed}/sketches/{sketch_size}sz-{cov}x-{scale}/{genome}-{sample}.ct"),
     params:
-        x=config['sketch_size'],
+        x=lambda wc: wc.sketch_size,
         N='1',
         k='20',
     log:
-        "data/{seed}/log/hashes/{genome}-{sample}_{cov}x.log"
+        "data/{seed}/log/sketches/{sketch_size}sz-{genome}-{sample}_{cov}x.log"
     threads:
         1
     shell:
@@ -267,15 +267,15 @@ rule hash:
 
 rule kwip:
     input:
-        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct",
+        expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct",
                genome=GENOMES, sample=SAMPLES),
     output:
-        d="data/{seed}/kwip/{cov}x-{scale}-{metric}.dist",
-        k="data/{seed}/kwip/{cov}x-{scale}-{metric}.kern"
+        d="data/{seed}/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.dist",
+        k="data/{seed}/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.kern"
     params:
         metric= lambda w: '-U' if w.metric == 'ip' else '',
     log:
-        "data/{seed}/log/kwip/{cov}x-{scale}-{metric}.log"
+        "data/{seed}/log/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.log"
     threads:
         1
     shell:
@@ -290,12 +290,12 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        expand("data/{{seed}}/hashes/{{cov}}x-{{scale}}/{genome}-{sample}.ct",
+        expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct",
                genome=GENOMES, sample=SAMPLES),
     output:
-        "data/{seed}/kwip/{cov}x-{scale}.stat"
+        "data/{seed}/kwip/{sketch_size}sz-{cov}x-{scale}.stat"
     log:
-        "data/{seed}/log/kwip-stats/{cov}x-{scale}.log"
+        "data/{seed}/log/kwip-stats/{sketch_size}sz-{cov}x-{scale}.log"
     threads:
         1
     shell:
