@@ -13,6 +13,7 @@ VERS[mason2]=2.0.5
 VERS[dawg]=f9ebcd8cff   # This commit was the dev HEAD for initial experiments
 VERS[trimit]=0.2.5
 VERS[kwip]=0.2.0
+VERS[mash]=1.1.1
 
 ## More about DAWG version:
 # We require features from the develop branch of DAWG, which will become dawg2.
@@ -52,6 +53,7 @@ apt-get install -yy              \
     python3-six                  \
     python3-tz                   \
     python3-dateutil             \
+
 
 
 ################################################################################
@@ -136,20 +138,29 @@ make all install
 make test
 rm -rf /usr/local/src/*
 
+##########
+#  MASH  #
+##########
+
+curl -LS \
+    https://github.com/marbl/Mash/releases/download/v${VERS[mash]}/mash-Linux64-v${VERS[mash]}.tar.gz \
+    | tar xz --strip-components 1 -C /usr/local/bin
+rm -rf /usr/local/src/*
+
+
 ################################################################################
 #                                   Cleanup                                    #
 ################################################################################
 
-apt-get purge -yy      \
-    curl               \
-    build-essential    \
-    cmake              \
-    pkg-config         \
-    libboost-dev       \
-    libbz2-dev         \
-    libgsl-dev         \
-    zlib1g-dev         \
-    python3-dev        \
+apt-get purge -yy   \
+    curl            \
+    build-essential \
+    cmake           \
+    pkg-config      \
+    libboost-dev    \
+    libbz2-dev      \
+    zlib1g-dev      \
+    python3-dev     \
 
 apt-get autoremove -y
 apt-get clean -y
