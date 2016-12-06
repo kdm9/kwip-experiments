@@ -8,10 +8,11 @@ coverage_cv: 0.3
 genome_size: 10000
 sketch_sizes:
   - "5e5"
+  - "1e6"
 
 # Pairs of coverage, tree scale (i.e. $\pi$, mean pairwise dist.)
 coverage_variablity:
   - {cov: 1, var: 0.001}
   - {cov: 4, var: 0.001}
   - {cov: 4, var: 0.01}
-  - {cov: 4, var: 0.001}
+  - {cov: 16, var: 0.001}
