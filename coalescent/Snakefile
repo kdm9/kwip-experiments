@@ -51,22 +51,32 @@ SCALES = list(SCALES)
 METRICS = ['wip', 'ip']
 
 
+def mash_res(wc):
+    if config["mash"]:
+        return expand(expand("data/{{seed}}/mash/{cov}x-{scale}.mashdist", zip,
+                             cov=map(lambda x: x[0], COV_VAR),
+                             scale=map(lambda x: x[1], COV_VAR)),
+                      seed=SEEDS)
+    else:
+        return []
+
+
 rule all:
     input:
         expand("data/{seed}/all_genomes-{scale}.dist", seed=SEEDS, scale=SCALES),
-        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz-{cov}x-{scale}.stat", zip,
+        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}.stat", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
                sketch_size=config["sketch_sizes"], seed=SEEDS),
-        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz-{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
                       cov=map(lambda x: x[0], COV_VAR),
                       scale=map(lambda x: x[1], COV_VAR)),
                sketch_size=config["sketch_sizes"], seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
-        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz-{cov}x-{scale}.stat", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               sketch_size=config["sketch_sizes"], seed=SEEDS),
-
+        # expand(expand("data/{{seed}}/reads/{cov}x-{scale}/{{genome}}-{{sample}}_il.fastq.gz", zip,
+        #               cov=map(lambda x: x[0], COV_VAR),
+        #               scale=map(lambda x: x[1], COV_VAR)),
+        #        seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        mash_res,
 
 rule clean:
     shell:
@@ -227,7 +237,8 @@ rule ilfq:
         r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
         r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
-        temp("data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz")
+        "data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz" if config.get("keep_reads", False)
+         else temp("data/{seed}/reads/{cov}x-{scale}/{genome}-{sample}_il.fastq.gz")
     log:
         "data/{seed}/log/join/{cov}x-{scale}/{genome}-{sample}.log"
     shell:
@@ -264,14 +275,31 @@ rule hash:
         " {input}"
         " >{log} 2>&1"
 
+rule mash:
+    input:
+        expand("data/{{seed}}/reads/{{cov}}x-{{scale}}/{genome}-{sample}_il.fastq.gz",
+               genome=GENOMES, sample=SAMPLES),
+    output:
+        sketch=temp("data/{seed}/mash/{cov}x-{scale}_allsketch.msh"),
+        dist="data/{seed}/mash/{cov}x-{scale}.mashdist",
+    log:
+        "data/{seed}/log/mash/{cov}x-{scale}.log"
+    threads:
+        1
+    shell:
+        "(mash sketch -o {output.sketch} {input} &&"
+        " mash dist {output.sketch} {input} |"
+        " ./scripts/mash2kwipdist.py /dev/stdin >{output.dist}"
+        ") >{log} 2>&1"
+
 
 rule kwip:
     input:
         expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct",
                genome=GENOMES, sample=SAMPLES),
     output:
-        d="data/{seed}/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.dist",
-        k="data/{seed}/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.kern"
+        d="data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}-{metric}.dist",
+        k="data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}-{metric}.kern"
     params:
         metric= lambda w: '-U' if w.metric == 'ip' else '',
     log:
@@ -287,13 +315,12 @@ rule kwip:
         " {input}"
         " >{log} 2>&1"
 
-
 rule kwip_stats:
     input:
         expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct",
                genome=GENOMES, sample=SAMPLES),
     output:
-        "data/{seed}/kwip/{sketch_size}sz-{cov}x-{scale}.stat"
+        "data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}.stat"
     log:
         "data/{seed}/log/kwip-stats/{sketch_size}sz-{cov}x-{scale}.log"
     threads:

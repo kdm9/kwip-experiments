@@ -6,6 +6,7 @@ num_chroms: 1 # Chromosomes
 runs_per_sample: 3    # Replicate runs per sample
 coverage_cv: 0.3
 genome_size: 1000000
+mash: false
 sketch_sizes:
   - "5e8"
 

@@ -6,7 +6,8 @@ num_chroms: 1 # Chromosomes
 runs_per_sample: 2 # Replicate runs per sample
 coverage_cv: 0.3
 genome_size: 100000
-sketch_size:
+mash: false
+sketch_sizes:
   - "5e7"
 
 # Pairs of coverage, tree scale (i.e. $\pi$, mean pairwise dist.)
