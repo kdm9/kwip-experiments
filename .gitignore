@@ -3,6 +3,7 @@
 *.fa
 
 *.tar*
+*.tpxz
 
 data
 
