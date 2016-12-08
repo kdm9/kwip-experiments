@@ -34,7 +34,7 @@ def convert(infile, outfile='/dev/stdout'):
 
     with open(outfile, 'w') as ofile:
         ids = [''] + list(sorted(dists.keys()))
-        print("", *ids, sep='\t', file=ofile)
+        print(*ids, sep='\t', file=ofile)
         for id1, row in sorted(dists.items()):
             rowdists = [it[1] for it in sorted(row.items())]
             print(id1, *rowdists, sep='\t', file=ofile)
