@@ -4,7 +4,7 @@ set -xeuo pipefail
 
 # Tool versions
 declare -A VERS
-VERS[snakemake]=3.8.2
+VERS[snakemake]=3.9.0
 VERS[khmer]=2.0
 VERS[skbio]=0.5.1
 VERS[ete3]=3.0.0b35
