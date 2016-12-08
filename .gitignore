@@ -2,6 +2,8 @@
 *.pyc
 *.fa
 
+*.tar*
+
 data
 
 .R*
