@@ -331,3 +331,78 @@ rule kwip_stats:
         " -t {threads}"
         " {input}"
         " >{log} 2>&1"
+
+rule kwip_rho:
+    input:
+        "data/{seed}/all_genomes-{scale}.dist",
+        "data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}-{metric}.dist",
+    output:
+        temp("data/{seed}/stats/rho/{metric}_{sketch_size}sz_{cov}x_{scale}.tab")
+    log:
+        "data/{seed}/log/stats_rho_{metric}_{sketch_size}sz_{cov}x_{scale}.log"
+    threads:
+        1
+    params:
+        reps=config['runs_per_sample'],
+    shell:
+        " scripts/calc_rho.py"
+        " -S {wildcards.seed}"
+        " -m {wildcards.metric}"
+        " -s {wildcards.sketch_size}"
+        " -c {wildcards.cov}"
+        " -v {wildcards.scale}"
+        " -r {params.reps}"
+        " {input}"
+        " >{output}"
+        " 2>{log}"
+
+rule mash_rho:
+    input:
+        "data/{seed}/all_genomes-{scale}.dist",
+        "data/{seed}/mash/{cov}x-{scale}.mashdist",
+    output:
+        "data/{seed}/stats/rho/mash_{cov}x_{scale}.tab"
+    log:
+        "data/{seed}/log/stats_rho_mash_{cov}x_{scale}.log"
+    threads:
+        1
+    params:
+        reps=config['runs_per_sample'],
+    shell:
+        " scripts/calc_rho.py"
+        " -S {wildcards.seed}"
+        " -m mash"
+        " -s NA"
+        " -c {wildcards.cov}"
+        " -v {wildcards.scale}"
+        " -r {params.reps}"
+        " {input}"
+        " >{output}"
+        " 2>{log}"
+
+
+
+def combined_input(wc):
+    inputs = []
+    pathfmt = "data/{seed}/stats/rho/{metric}_{sketch_size}sz_{cov}x_{scale}.tab"
+    for seed in SEEDS:
+        for cov, scale in COV_VAR:
+            for sketch_size in config["sketch_sizes"]:
+                for metric in METRICS:
+                    inputs.append(pathfmt.format(seed=seed, metric=metric,
+                                                sketch_size=sketch_size, cov=cov,
+                                                scale=scale))
+    if config["mash"]:
+        pathfmt = "data/{seed}/stats/rho/mash_{cov}x_{scale}.tab"
+        for seed in SEEDS:
+            for cov, scale in COV_VAR:
+                inputs.append(pathfmt.format(seed=seed, cov=cov, scale=scale))
+    return inputs
+
+rule combined_rho:
+    input:
+       combined_input
+    output:
+        "data/stats/rho.tab"
+    shell:
+        "cat {input} > {output}"
