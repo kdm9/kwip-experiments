@@ -14,6 +14,7 @@ VERS[dawg]=f9ebcd8cff   # This commit was the dev HEAD for initial experiments
 VERS[trimit]=0.2.5
 VERS[kwip]=0.2.0
 VERS[mash]=1.1.1
+VERS[pairs]=3d05375004
 
 ## More about DAWG version:
 # We require features from the develop branch of DAWG, which will become dawg2.
@@ -146,6 +147,24 @@ curl -LS \
     https://github.com/marbl/Mash/releases/download/v${VERS[mash]}/mash-Linux64-v${VERS[mash]}.tar.gz \
     | tar xz --strip-components 1 -C /usr/local/bin
 rm -rf /usr/local/src/*
+
+###########
+#  Pairs  #
+###########
+
+# Pairs lives in seqqs
+
+tarname=seqqs_${VERS[pairs]}.tar.gz
+cd /usr/local/src
+curl -LS -o ${tarname}  \
+    https://github.com/vsbuffalo/seqqs/archive/${VERS[pairs]}.tar.gz
+tar xvf ${tarname}
+cd seqqs-${VERS[pairs]}*/
+make pairs
+mv pairs /usr/local/bin/
+cd ../
+rm -rf /usr/local/src/*
+unset tarname
 
 
 ################################################################################

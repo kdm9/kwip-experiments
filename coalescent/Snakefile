@@ -243,11 +243,11 @@ rule ilfq:
     log:
         "data/{seed}/log/join/{cov}x-{scale}/{genome}-{sample}.log"
     shell:
-        "interleave-reads.py"
-        " {input.r1}"
-        " {input.r2}"
-        " 2>>{log}"
-        " > {output}"
+        "(pairs join -ts"
+        "   {input.r1}"
+        "   {input.r2}"
+        "| gzip > {output}"
+        ") 2>>{log}"
 
 
 rule hash:
