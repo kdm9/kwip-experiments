@@ -255,7 +255,7 @@ rule hash:
         r1="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R1.fastq",
         r2="data/{seed}/temp/{cov}x-{scale}/{genome}-{sample}_R2.fastq"
     output:
-        temp("data/{seed}/sketches/{sketch_size}sz-{cov}x-{scale}/{genome}-{sample}.ct"),
+        temp("data/{seed}/sketches/{sketch_size}sz-{cov}x-{scale}/{genome}-{sample}.ct.gz"),
     params:
         x=lambda wc: wc.sketch_size,
         N='1',
@@ -296,7 +296,7 @@ rule mash:
 
 rule kwip:
     input:
-        expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct",
+        expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
                genome=GENOMES, sample=SAMPLES),
     output:
         d="data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}-{metric}.dist",
@@ -318,7 +318,7 @@ rule kwip:
 
 rule kwip_stats:
     input:
-        expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct",
+        expand("data/{{seed}}/sketches/{{sketch_size}}sz-{{cov}}x-{{scale}}/{genome}-{sample}.ct.gz",
                genome=GENOMES, sample=SAMPLES),
     output:
         "data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}.stat"
