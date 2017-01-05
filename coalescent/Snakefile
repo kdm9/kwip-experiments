@@ -13,6 +13,7 @@ N = config["population_size"]
 COV_VAR = [(d['cov'], d['var']) for d in config["coverage_variablity"]]
 
 
+#SEEDS = list(random.sample(range(10000), int(config["num_replicates"])))
 SEEDS = set()
 while len(SEEDS) < int(config["num_replicates"]):
     SEEDS.add(random.randrange(1e4))
@@ -38,7 +39,7 @@ for seed in SEEDS:
         for s in SAMPLES:
             readnum[g][str(s)] = {}
             for c, v in COV_VAR:
-                cov = random.gauss(c, c * int(config["coverage_cv"]))
+                cov = random.gauss(c, c * float(config["coverage_cv"]))
                 nread = max((cov * config["genome_size"]) / 200, 100)
                 try:
                     readnum[g][str(s)][str(c)][str(v)] = int(nread)
@@ -60,23 +61,35 @@ def mash_res(wc):
     else:
         return []
 
+def kwip_res(wc):
+    if config.get('kwip', False):
+        return (
+              expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}.stat", zip,
+                            cov=map(lambda x: x[0], COV_VAR),
+                            scale=map(lambda x: x[1], COV_VAR)),
+                     sketch_size=config["sketch_sizes"], seed=SEEDS)
+               + expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+                               cov=map(lambda x: x[0], COV_VAR),
+                               scale=map(lambda x: x[1], COV_VAR)),
+                        sketch_size=config["sketch_sizes"], seed=SEEDS, metric=METRICS, ext=['dist', 'kern'])
+        )
+    return []
+
+def reads_res(wc):
+    if config.get('keep_reads', False):
+        return expand(expand("data/{{seed}}/reads/{cov}x-{scale}/{{genome}}-{{sample}}_il.fastq.gz", zip,
+                             cov=map(lambda x: x[0], COV_VAR),
+                             scale=map(lambda x: x[1], COV_VAR)),
+                      seed=SEEDS, genome=GENOMES, sample=SAMPLES)
+    return []
+ 
 
 rule all:
     input:
         expand("data/{seed}/all_genomes-{scale}.dist", seed=SEEDS, scale=SCALES),
-        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}.stat", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               sketch_size=config["sketch_sizes"], seed=SEEDS),
-        expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
-                      cov=map(lambda x: x[0], COV_VAR),
-                      scale=map(lambda x: x[1], COV_VAR)),
-               sketch_size=config["sketch_sizes"], seed=SEEDS, metric=METRICS, ext=['dist', 'kern']),
-        # expand(expand("data/{{seed}}/reads/{cov}x-{scale}/{{genome}}-{{sample}}_il.fastq.gz", zip,
-        #               cov=map(lambda x: x[0], COV_VAR),
-        #               scale=map(lambda x: x[1], COV_VAR)),
-        #        seed=SEEDS, genome=GENOMES, sample=SAMPLES),
+        reads_res,
         mash_res,
+        kwip_res,
         "data/stats/rho.tab",
 
 rule clean:
@@ -335,8 +348,8 @@ rule kwip_stats:
 
 rule kwip_rho:
     input:
-        "data/{seed}/all_genomes-{scale}.dist",
-        "data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}-{metric}.dist",
+        truth="data/{seed}/all_genomes-{scale}.dist",
+        obtained="data/{seed}/kwip/{sketch_size}sz/{cov}x-{scale}-{metric}.dist",
     output:
         temp("data/{seed}/stats/rho/{metric}_{sketch_size}sz_{cov}x_{scale}.tab")
     log:
@@ -353,7 +366,8 @@ rule kwip_rho:
         " -c {wildcards.cov}"
         " -v {wildcards.scale}"
         " -r {params.reps}"
-        " {input}"
+        " {input.truth}"
+        " {input.obtained}"
         " >{output}"
         " 2>{log}"
 
@@ -386,13 +400,14 @@ rule mash_rho:
 def combined_input(wc):
     inputs = []
     pathfmt = "data/{seed}/stats/rho/{metric}_{sketch_size}sz_{cov}x_{scale}.tab"
-    for seed in SEEDS:
-        for cov, scale in COV_VAR:
-            for sketch_size in config["sketch_sizes"]:
-                for metric in METRICS:
-                    inputs.append(pathfmt.format(seed=seed, metric=metric,
-                                                sketch_size=sketch_size, cov=cov,
-                                                scale=scale))
+    if config.get('kwip', True):
+        for seed in SEEDS:
+            for cov, scale in COV_VAR:
+                for sketch_size in config["sketch_sizes"]:
+                    for metric in METRICS:
+                        inputs.append(pathfmt.format(seed=seed, metric=metric,
+                                                    sketch_size=sketch_size, cov=cov,
+                                                    scale=scale))
     if config["mash"]:
         pathfmt = "data/{seed}/stats/rho/mash_{cov}x_{scale}.tab"
         for seed in SEEDS:
