@@ -285,6 +285,7 @@ rule hash:
         " -x {params.x}"
         " -k {params.k}"
         " -b"
+        " -f"
         " -s tsv"
         " -T {threads}"
         " {output}"

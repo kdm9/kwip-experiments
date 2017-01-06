@@ -7,7 +7,7 @@ runs_per_sample: 3    # Replicate runs per sample
 coverage_cv: 0.3
 genome_size: 1000000
 mash: true
-keep_reads: true
+keep_reads: false
 kwip: true
 kwip_sketch_sizes:
   - "1e8"
@@ -27,12 +27,12 @@ coverage_variablity:
   - {cov: 32, var: 0.01}
   - {cov: 64, var: 0.01}
   - {cov: 128, var: 0.01}
-  - {cov: 32, var: 0.2}
-  - {cov: 32, var: 0.1}
-  - {cov: 32, var: 0.05}
-  - {cov: 32, var: 0.02}
-    #- {cov: 32, var: 0.01} It's above
-  - {cov: 32, var: 0.005}
-  - {cov: 32, var: 0.002}
-  - {cov: 32, var: 0.001}
+  - {cov: 16, var: 0.2}
+  - {cov: 16, var: 0.1}
+  - {cov: 16, var: 0.05}
+  - {cov: 16, var: 0.02}
+    #- {cov: 16, var: 0.01} It's above
+  - {cov: 16, var: 0.005}
+  - {cov: 16, var: 0.002}
+  - {cov: 16, var: 0.001}
 
