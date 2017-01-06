@@ -1,44 +1,38 @@
 seed: 3301
-num_replicates: 50
+num_replicates: 20
 population_size: 12
 recomb_per_gen: 1
 num_chroms: 1 # Chromosomes
 runs_per_sample: 3    # Replicate runs per sample
 coverage_cv: 0.3
 genome_size: 1000000
-mash: false
-sketch_sizes:
-  - "5e8"
+mash: true
+keep_reads: true
+kwip: true
+kwip_sketch_sizes:
+  - "1e8"
+  - "1e7"
+mash_sketch_sizes:
+  - 1000
+  - 10000
+  - 1000000
 
 # Pairs of coverage, tree scale (i.e. $\pi$, mean pairwise dist.)
 coverage_variablity:
-  - {cov: 0.5, var: 0.001}
-  - {cov: 1, var: 0.001}
-  - {cov: 2, var: 0.001}
-  - {cov: 4, var: 0.001}
-  - {cov: 8, var: 0.001}
-  - {cov: 12, var: 0.001}
-  - {cov: 15, var: 0.001}
-  - {cov: 30, var: 0.001}
-  - {cov: 50, var: 0.001}
-  - {cov: 100, var: 0.001}
-  - {cov: 200, var: 0.001}
-    # - {cov: 0.5, var: 0.01}
-    # - {cov: 1, var: 0.01}
-    # - {cov: 2, var: 0.01}
-    # - {cov: 4, var: 0.01}
-    # - {cov: 8, var: 0.01}
-    # - {cov: 12, var: 0.01}
-    # - {cov: 15, var: 0.01}
-    # - {cov: 30, var: 0.01}
-    # - {cov: 50, var: 0.01}
-  - {cov: 10, var: 0.1}
-  - {cov: 10, var: 0.06}
-  - {cov: 10, var: 0.04}
-  - {cov: 10, var: 0.02}
-  - {cov: 10, var: 0.01}
-  - {cov: 10, var: 0.006}
-  - {cov: 10, var: 0.004}
-  - {cov: 10, var: 0.002}
-  - {cov: 10, var: 0.001}
+  - {cov: 1, var: 0.01}
+  - {cov: 2, var: 0.01}
+  - {cov: 4, var: 0.01}
+  - {cov: 8, var: 0.01}
+  - {cov: 16, var: 0.01}
+  - {cov: 32, var: 0.01}
+  - {cov: 64, var: 0.01}
+  - {cov: 128, var: 0.01}
+  - {cov: 32, var: 0.2}
+  - {cov: 32, var: 0.1}
+  - {cov: 32, var: 0.05}
+  - {cov: 32, var: 0.02}
+    #- {cov: 32, var: 0.01} It's above
+  - {cov: 32, var: 0.005}
+  - {cov: 32, var: 0.002}
+  - {cov: 32, var: 0.001}
 
