@@ -1,4 +1,4 @@
-seed: 3301
+seed: 212834
 num_replicates: 20
 population_size: 12
 recomb_per_gen: 1
