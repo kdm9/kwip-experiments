@@ -1,0 +1,23 @@
+seed: 3301
+num_replicates: 30
+population_size: 12
+recomb_per_gen: 1
+num_chroms: 1 # Chromosomes
+runs_per_sample: 2 # Replicate runs per sample
+coverage_cv: 0.1
+genome_size: 1000000
+mash: true
+sketch_sizes:
+  - "1e8"
+
+# Pairs of coverage, tree scale (i.e. $\pi$, mean pairwise dist.)
+coverage_variablity:
+  - {cov: 10, var: 0.1}
+  - {cov: 10, var: 0.05}
+  - {cov: 10, var: 0.01}
+  - {cov: 10, var: 0.005}
+  - {cov: 10, var: 0.001}
+  - {cov: 10, var: 0.0005}
+  - {cov: 10, var: 0.0001}
+  - {cov: 10, var: 0.00001}
+
