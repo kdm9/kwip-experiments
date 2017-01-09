@@ -5,3 +5,6 @@ data
 
 # scratch space for analysing output
 runs
+
+201?-*_data/
+*.log
