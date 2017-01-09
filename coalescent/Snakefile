@@ -304,10 +304,13 @@ rule mash:
         "data/{seed}/log/mash/{sketch_size}sz/{cov}x-{scale}.log"
     threads:
         1
+    params:
+        min_abund=lambda wc: '2' if int(wc.cov) > 8 else '1'
     shell:
         "(mash sketch "
         "   -s {wildcards.sketch_size} "
         "   -o {output.sketch} "
+        "   -m {params.min_abund} "
         "   {input}"
         " && mash dist {output.sketch} {output.sketch}"
         " | tee {output.mashdist}"
