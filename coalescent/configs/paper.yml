@@ -1,4 +1,5 @@
 seed: 3301
+kmerlen: 20
 num_replicates: 50
 population_size: 12
 recomb_per_gen: 1

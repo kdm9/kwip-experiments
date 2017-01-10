@@ -9,6 +9,7 @@ import json
 
 random.seed(int(config['seed']))
 
+KMERLEN = config.get("kmerlen", 20)
 N = config["population_size"]
 COV_VAR = [(d['cov'], d['var']) for d in config["coverage_variablity"]]
 
@@ -273,23 +274,22 @@ rule hash:
         temp("data/{seed}/sketches/{sketch_size}sz-{cov}x-{scale}/{genome}-{sample}.ct.gz"),
     params:
         x=lambda wc: wc.sketch_size,
-        N='1',
-        k='20',
+        k=KMERLEN,
     log:
         "data/{seed}/log/sketches/{sketch_size}sz-{genome}-{sample}_{cov}x.log"
     threads:
         1
     shell:
         "load-into-counting.py"
-        " -N {params.N}"
-        " -x {params.x}"
-        " -k {params.k}"
-        " -b"
-        " -f"
-        " -s tsv"
-        " -T {threads}"
-        " {output}"
-        " {input}"
+        "   -N 1"
+        "   -x {params.x}"
+        "   -k {params.k}"
+        "   -b"
+        "   -f"
+        "   -s tsv"
+        "   -T {threads}"
+        "   {output}"
+        "   {input}"
         " >{log} 2>&1"
 
 rule mash:
@@ -305,10 +305,12 @@ rule mash:
     threads:
         1
     params:
-        min_abund=lambda wc: '2' if int(wc.cov) > 8 else '1'
+        min_abund=lambda wc: '2' if int(wc.cov) > 8 else '1',
+        k=KMERLEN,
     shell:
         "(mash sketch "
         "   -s {wildcards.sketch_size} "
+        "   -k {params.k}"
         "   -o {output.sketch} "
         "   -m {params.min_abund} "
         "   {input}"
