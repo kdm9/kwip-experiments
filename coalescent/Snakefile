@@ -435,5 +435,8 @@ rule combined_rho:
        combined_input
     output:
         "data/stats/rho.tab"
-    shell:
-        "cat {input} > {output}"
+    run:
+        with open(output[0], "w") as ofh:
+            for infn in input:
+                 with open(infn) as infh:
+                    ofh.write(infh.read())
