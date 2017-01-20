@@ -14,7 +14,8 @@ N = config["population_size"]
 COV_VAR = [(d['cov'], d['var']) for d in config["coverage_variablity"]]
 
 wildcard_constraints:
-    metric="w?ip"
+    mashec="mash(ec)?",
+    metric="w?ip",
 
 #SEEDS = list(random.sample(range(10000), int(config["num_replicates"])))
 SEEDS = set()
@@ -57,26 +58,27 @@ METRICS = ['wip', 'ip']
 
 def mash_res(wc):
     if config["mash"]:
-        return expand(expand("data/{{seed}}/mash/{{sketch_size}}sz/{cov}x-{scale}.dist", zip,
+        return expand(expand("data/{{seed}}/mash/{{sketch_size}}sz-{{mashec}}/{cov}x-{scale}.dist", zip,
                              cov=map(lambda x: x[0], COV_VAR),
                              scale=map(lambda x: x[1], COV_VAR)),
-                      sketch_size=config["mash_sketch_sizes"], seed=SEEDS)
+                      sketch_size=config["mash_sketch_sizes"], seed=SEEDS, mashec=['mash', 'mashec'])
     else:
         return []
 
 def kwip_res(wc):
+    r = []
     if config.get('kwip', False):
-        return (
-              expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}.stat", zip,
+        if config.get('kwip_stats', False):
+            r.extend(expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}.stat", zip,
                             cov=map(lambda x: x[0], COV_VAR),
                             scale=map(lambda x: x[1], COV_VAR)),
-                     sketch_size=config["kwip_sketch_sizes"], seed=SEEDS)
-               + expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
+                     sketch_size=config["kwip_sketch_sizes"], seed=SEEDS))
+        r.extend(expand(expand("data/{{seed}}/kwip/{{sketch_size}}sz/{cov}x-{scale}-{{metric}}.{{ext}}", zip,
                                cov=map(lambda x: x[0], COV_VAR),
                                scale=map(lambda x: x[1], COV_VAR)),
                         sketch_size=config["kwip_sketch_sizes"], seed=SEEDS, metric=METRICS, ext=['dist', 'kern'])
         )
-    return []
+    return r
 
 def reads_res(wc):
     if config.get('keep_reads', False):
@@ -85,7 +87,6 @@ def reads_res(wc):
                              scale=map(lambda x: x[1], COV_VAR)),
                       seed=SEEDS, genome=GENOMES, sample=SAMPLES)
     return []
- 
 
 rule all:
     input:
@@ -276,7 +277,9 @@ rule hash:
         x=lambda wc: wc.sketch_size,
         k=KMERLEN,
     log:
-        "data/{seed}/log/sketches/{sketch_size}sz-{genome}-{sample}_{cov}x.log"
+        "data/{seed}/log/khmer/{sketch_size}sz-{genome}-{sample}_{cov}x.log"
+    benchmark:
+        "data/{seed}/bench/khmer/{sketch_size}sz-{genome}-{sample}_{cov}x.tsv"
     threads:
         1
     shell:
@@ -292,20 +295,20 @@ rule hash:
         "   {input}"
         " >{log} 2>&1"
 
-rule mash:
+rule mashsketch:
     input:
         expand("data/{{seed}}/reads/{{cov}}x-{{scale}}/{genome}-{sample}_il.fastq.gz",
                genome=GENOMES, sample=SAMPLES),
     output:
-        sketch=temp("data/{seed}/mash/{sketch_size}sz/{cov}x-{scale}_allsketch.msh"),
-        dist="data/{seed}/mash/{sketch_size}sz/{cov}x-{scale}.dist",
-        mashdist="data/{seed}/mash/{sketch_size}sz/{cov}x-{scale}.mashdist",
+        sketch=temp("data/{seed}/mash/{sketch_size}sz-{mashec}/{cov}x-{scale}_allsketch.msh"),
     log:
-        "data/{seed}/log/mash/{sketch_size}sz/{cov}x-{scale}.log"
+        "data/{seed}/log/mashsketch/{sketch_size}sz-{mashec}-{cov}x-{scale}.log"
+    benchmark:
+        "data/{seed}/bench/mashsketch/{sketch_size}sz-{mashec}-{cov}x-{scale}.tsv"
     threads:
         1
     params:
-        min_abund=lambda wc: '2' if int(wc.cov) > 8 else '1',
+        min_abund=lambda wc: '2' if int(wc.cov) > 8 and wc.mashec == 'mashec' else '1',
         k=KMERLEN,
     shell:
         "(mash sketch "
@@ -314,7 +317,23 @@ rule mash:
         "   -o {output.sketch} "
         "   -m {params.min_abund} "
         "   {input}"
-        " && mash dist {output.sketch} {output.sketch}"
+        ") >{log} 2>&1"
+
+
+rule mash:
+    input:
+        "data/{seed}/mash/{sketch_size}sz-{mashec}/{cov}x-{scale}_allsketch.msh",
+    output:
+        dist="data/{seed}/mash/{sketch_size}sz-{mashec}/{cov}x-{scale}.dist",
+        mashdist="data/{seed}/mash/{sketch_size}sz-{mashec}/{cov}x-{scale}.mashdist",
+    benchmark:
+        "data/{seed}/bench/mash/{sketch_size}sz-{mashec}-{cov}x-{scale}.tsv"
+    log:
+        "data/{seed}/log/mash/{sketch_size}sz-{mashec}-{cov}x-{scale}.log"
+    threads:
+        1
+    shell:
+        "(mash dist {input} {input}"
         " | tee {output.mashdist}"
         " | ./scripts/mash2kwipdist.py /dev/stdin >{output.dist}"
         ") >{log} 2>&1"
@@ -331,6 +350,8 @@ rule kwip:
         metric= lambda w: '-U' if w.metric == 'ip' else '',
     log:
         "data/{seed}/log/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.log"
+    benchmark:
+        "data/{seed}/bench/kwip/{sketch_size}sz-{cov}x-{scale}-{metric}.tsv"
     threads:
         1
     shell:
@@ -387,9 +408,9 @@ rule kwip_rho:
 rule mash_rho:
     input:
         "data/{seed}/all_genomes-{scale}.dist",
-        "data/{seed}/mash/{sketch_size}sz/{cov}x-{scale}.dist",
+        "data/{seed}/mash/{sketch_size}sz-{mashec}/{cov}x-{scale}.dist",
     output:
-        "data/{seed}/stats/rho/mash_{sketch_size}sz_{cov}x_{scale}.tab"
+        "data/{seed}/stats/rho/{mashec}_{sketch_size}sz_{cov}x_{scale}.tab"
     log:
         "data/{seed}/log/stats_rho_mash_{cov}x_{scale}.log"
     threads:
@@ -399,7 +420,7 @@ rule mash_rho:
     shell:
         " scripts/calc_rho.py"
         " -S {wildcards.seed}"
-        " -m mash"
+        " -m {wildcards.mashec}"
         " -s {wildcards.sketch_size}"
         " -c {wildcards.cov}"
         " -v {wildcards.scale}"
@@ -422,12 +443,13 @@ def combined_input(wc):
                                                     sketch_size=sketch_size, cov=cov,
                                                     scale=scale))
     if config["mash"]:
-        pathfmt = "data/{seed}/stats/rho/mash_{sketch_size}sz_{cov}x_{scale}.tab"
+        pathfmt = "data/{seed}/stats/rho/{mashec}_{sketch_size}sz_{cov}x_{scale}.tab"
         for seed in SEEDS:
             for cov, scale in COV_VAR:
                 for sketch_size in config["mash_sketch_sizes"]:
-                    inputs.append(pathfmt.format(seed=seed, sketch_size=sketch_size,
-                                                 cov=cov, scale=scale))
+                    for ec in ['mash', 'mashec']:
+                        inputs.append(pathfmt.format(seed=seed, sketch_size=sketch_size,
+                                                     mashec=ec, cov=cov, scale=scale))
     return inputs
 
 rule combined_rho:
