@@ -308,7 +308,7 @@ rule mashsketch:
     threads:
         1
     params:
-        min_abund=lambda wc: '2' if int(wc.cov) > 8 and wc.mashec == 'mashec' else '1',
+        min_abund=lambda wc: '2' if wc.mashec == 'mashec' else '1',
         k=KMERLEN,
     shell:
         "(mash sketch "
