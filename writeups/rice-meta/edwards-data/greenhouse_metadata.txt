@@ -1,0 +1,228 @@
+SampleID	Site	Cultivar	Compartment	Run	Description
+JE.Soil.1	Arbuckle	Soil	Bulk Soil	3	3-N-BS
+JE.Soil.2	Arbuckle	Nipponebare	Rhizosphere	3	3-N-1mm
+JE.Soil.3	Arbuckle	Nipponebare	Rhizoplane	3	3-N-BF
+JE.Soil.4	Arbuckle	Nipponebare	Endosphere	3	3-N-Endo
+JE.Soil.5	Arbuckle	Soil	Bulk Soil	3	3-M-BS
+JE.Soil.6	Arbuckle	M104	Rhizosphere	3	3-M-1mm
+JE.Soil.7	Arbuckle	M104	Rhizoplane	3	3-M-BF
+JE.Soil.8	Arbuckle	M104	Endosphere	3	3-M-Endo
+JE.Soil.12	Arbuckle	IR50	Endosphere	3	3-I-Endo
+JE.Soil.13	Arbuckle	Soil	Bulk Soil	3	3-9-BS
+JE.Soil.14	Arbuckle	93-11	Rhizosphere	3	3-9-1mm
+JE.Soil.15	Arbuckle	93-11	Rhizoplane	3	3-9-BF
+JE.Soil.16	Arbuckle	93-11	Endosphere	3	3-9-Endo
+JE.Soil.17	Arbuckle	Soil	Bulk Soil	3	3-E-BS
+JE.Soil.18	Arbuckle	Glab_E	Rhizosphere	3	3-E-1mm
+JE.Soil.19	Arbuckle	Glab_E	Rhizoplane	3	3-E-BF
+JE.Soil.20	Arbuckle	Glab_E	Endosphere	3	3-E-Endo
+JE.Soil.21	Arbuckle	Soil	Bulk Soil	3	3-B-BS
+JE.Soil.22	Arbuckle	Glab_B	Rhizosphere	3	3-B-1mm
+JE.Soil.23	Arbuckle	Glab_B	Rhizoplane	3	3-B-BF
+JE.Soil.24	Arbuckle	Glab_B	Endosphere	3	3-B-Endo
+JE.Soil.26	Arbuckle	Nipponebare	Rhizosphere	3	4-N-1mm
+JE.Soil.27	Arbuckle	Nipponebare	Rhizoplane	3	4-N-BF
+JE.Soil.28	Arbuckle	Nipponebare	Endosphere	3	4-N-Endo
+JE.Soil.29	Arbuckle	Soil	Bulk Soil	3	4-M-BS
+JE.Soil.30	Arbuckle	M104	Rhizosphere	3	4-M-1mm
+JE.Soil.31	Arbuckle	M104	Rhizoplane	3	4-M-BF
+JE.Soil.32	Arbuckle	M104	Endosphere	3	4-M-Endo
+JE.Soil.33	Arbuckle	Soil	Bulk Soil	3	4-I-BS
+JE.Soil.34	Arbuckle	IR50	Rhizosphere	3	4-I-1mm
+JE.Soil.35	Arbuckle	IR50	Rhizoplane	3	4-I-BF
+JE.Soil.36	Arbuckle	IR50	Endosphere	3	4-I-Endo
+JE.Soil.37	Arbuckle	Soil	Bulk Soil	3	4-9-BS
+JE.Soil.38	Arbuckle	93-11	Rhizosphere	3	4-9-1mm
+JE.Soil.39	Arbuckle	93-11	Rhizoplane	3	4-9-BF
+JE.Soil.40	Arbuckle	93-11	Endosphere	3	4-9-Endo
+JE.Soil.41	Arbuckle	Soil	Bulk Soil	3	4-E-BS
+JE.Soil.42	Arbuckle	Glab_E	Rhizosphere	3	4-E-1mm
+JE.Soil.43	Arbuckle	Glab_E	Rhizoplane	3	4-E-BF
+JE.Soil.44	Arbuckle	Glab_E	Endosphere	3	4-E-Endo
+JE.Soil.45	Arbuckle	Soil	Bulk Soil	3	4-B-BS
+JE.Soil.46	Arbuckle	Glab_B	Rhizosphere	3	4-B-1mm
+JE.Soil.47	Arbuckle	Glab_B	Rhizoplane	3	4-B-BF
+JE.Soil.48	Arbuckle	Glab_B	Endosphere	3	4-B-Endo
+JE.Soil.50	Davis	Nipponebare	Rhizosphere	3	5-N-1mm
+JE.Soil.51	Davis	Nipponebare	Rhizoplane	3	5-N-BF
+JE.Soil.52	Davis	Nipponebare	Endosphere	3	5-N-Endo
+JE.Soil.54	Davis	M104	Rhizosphere	3	5-M-1mm
+JE.Soil.56	Davis	M104	Endosphere	3	5-M-Endo
+JE.Soil.57	Davis	Soil	Bulk Soil	3	5-I-BS
+JE.Soil.58	Davis	IR50	Rhizosphere	3	5-I-1mm
+JE.Soil.59	Davis	IR50	Rhizoplane	3	5-I-BF
+JE.Soil.60	Davis	IR50	Endosphere	3	5-I-Endo
+JE.Soil.62	Davis	93-11	Rhizosphere	3	5-9-1mm
+JE.Soil.63	Davis	93-11	Rhizoplane	3	5-9-BF
+JE.Soil.64	Davis	93-11	Endosphere	3	5-9-Endo
+JE.Soil.66	Davis	Glab_E	Rhizosphere	3	5-E-1mm
+JE.Soil.67	Davis	Glab_E	Rhizoplane	3	5-E-BF
+JE.Soil.68	Davis	Glab_E	Endosphere	3	5-E-Endo
+JE.Soil.70	Davis	Glab_B	Rhizosphere	3	5-B-1mm
+JE.Soil.71	Davis	Glab_B	Rhizoplane	3	5-B-BF
+JE.Soil.72	Davis	Glab_B	Endosphere	3	5-B-Endo
+JE.Soil.74	Davis	Nipponebare	Rhizosphere	3	7-N-1mm
+JE.Soil.75	Davis	Nipponebare	Rhizoplane	3	7-N-BF
+JE.Soil.76	Davis	Nipponebare	Endosphere	3	7-N-Endo
+JE.Soil.78	Davis	M104	Rhizosphere	3	7-M-1mm
+JE.Soil.80	Davis	M104	Endosphere	3	7-M-Endo
+JE.Soil.82	Davis	IR50	Rhizosphere	3	7-I-1mm
+JE.Soil.83	Davis	IR50	Rhizoplane	3	7-I-BF
+JE.Soil.84	Davis	IR50	Endosphere	3	7-I-Endo
+JE.Soil.86	Davis	93-11	Rhizosphere	3	7-9-1mm
+JE.Soil.87	Davis	93-11	Rhizoplane	3	7-9-BF
+JE.Soil.88	Davis	93-11	Endosphere	3	7-9-Endo
+JE.Soil.91	Davis	Glab_E	Rhizoplane	3	7-E-BF
+JE.Soil.92	Davis	Glab_E	Endosphere	3	7-E-Endo
+JE.Soil.95	Davis	Glab_B	Rhizoplane	3	7-B-BF
+JE.Soil.96	Davis	Glab_B	Endosphere	3	7-B-Endo
+JE.Soil.98	Sacramento	Nipponebare	Rhizosphere	3	10-N-1mm
+JE.Soil.99	Sacramento	Nipponebare	Rhizoplane	3	10-N-BF
+JE.Soil.100	Sacramento	Nipponebare	Endosphere	3	10-N-Endo
+JE.Soil.101	Sacramento	Soil	Bulk Soil	3	10-M-BS
+JE.Soil.102	Sacramento	M104	Rhizosphere	3	10-M-1mm
+JE.Soil.103	Sacramento	M104	Rhizoplane	3	10-M-BF
+JE.Soil.104	Sacramento	M104	Endosphere	3	10-M-Endo
+JE.Soil.105	Sacramento	Soil	Bulk Soil	3	10-I-BS
+JE.Soil.106	Sacramento	IR50	Rhizosphere	3	10-I-1mm
+JE.Soil.107	Sacramento	IR50	Rhizoplane	3	10-I-BF
+JE.Soil.108	Sacramento	IR50	Endosphere	3	10-I-Endo
+JE.Soil.109	Sacramento	Soil	Bulk Soil	3	10-9-BS
+JE.Soil.110	Sacramento	93-11	Rhizosphere	3	10-9-1mm
+JE.Soil.111	Sacramento	93-11	Rhizoplane	3	10-9-BF
+JE.Soil.112	Sacramento	93-11	Endosphere	3	10-9-Endo
+JE.Soil.113	Sacramento	Soil	Bulk Soil	3	10-E-BS
+JE.Soil.115	Sacramento	Glab_E	Rhizoplane	3	10-E-BF
+JE.Soil.116	Sacramento	Glab_E	Endosphere	3	10-E-Endo
+JE.Soil.117	Sacramento	Soil	Bulk Soil	3	10-B-BS
+JE.Soil.118	Sacramento	Glab_B	Rhizosphere	3	10-B-1mm
+JE.Soil.119	Sacramento	Glab_B	Rhizoplane	3	10-B-BF
+JE.Soil.120	Sacramento	Glab_B	Endosphere	3	10-B-Endo
+JE.Soil.121	Sacramento	Soil	Bulk Soil	3	12-N-BS
+JE.Soil.122	Sacramento	Nipponebare	Rhizosphere	3	12-N-1mm
+JE.Soil.124	Sacramento	Nipponebare	Endosphere	3	12-N-Endo
+JE.Soil.125	Sacramento	Soil	Bulk Soil	3	12-M-BS
+JE.Soil.126	Sacramento	M104	Rhizosphere	3	12-M-1mm
+JE.Soil.127	Sacramento	M104	Rhizoplane	3	12-M-BF
+JE.Soil.128	Sacramento	M104	Endosphere	3	12-M-Endo
+JE.Soil.129	Sacramento	Soil	Bulk Soil	3	12-I-BS
+JE.Soil.130	Sacramento	IR50	Rhizosphere	3	12-I-1mm
+JE.Soil.131	Sacramento	IR50	Rhizoplane	3	12-I-BF
+JE.Soil.133	Sacramento	Soil	Bulk Soil	3	12-9-BS
+JE.Soil.134	Sacramento	93-11	Rhizosphere	3	12-9-1mm
+JE.Soil.135	Sacramento	93-11	Rhizoplane	3	12-9-BF
+JE.Soil.136	Sacramento	93-11	Endosphere	3	12-9-Endo
+JE.Soil.138	Sacramento	Glab_E	Rhizosphere	3	12-E-1mm
+JE.Soil.139	Sacramento	Glab_E	Rhizoplane	3	12-E-BF
+JE.Soil.141	Sacramento	Soil	Bulk Soil	3	12-B-BS
+JE.Soil.142	Sacramento	Glab_B	Rhizosphere	3	12-B-1mm
+JE.Soil.143	Sacramento	Glab_B	Rhizoplane	3	12-B-BF
+JE.Soil.144	Sacramento	Glab_B	Endosphere	3	12-B-Endo
+JE.Soil.177	Arbuckle	Soil	Bulk Soil	4	1-N-BS
+JE.Soil.178	Arbuckle	Nipponebare	Rhizosphere	4	1-N-1mm
+JE.Soil.179	Arbuckle	Nipponebare	Rhizoplane	4	1-N-BF
+JE.Soil.180	Arbuckle	Nipponebare	Endosphere	4	1-N-Endo
+JE.Soil.181	Arbuckle	Soil	Bulk Soil	4	1-M-BS
+JE.Soil.182	Arbuckle	M104	Rhizosphere	4	1-M-1mm
+JE.Soil.183	Arbuckle	M104	Rhizoplane	4	1-M-BF
+JE.Soil.184	Arbuckle	M104	Endosphere	4	1-M-Endo
+JE.Soil.185	Arbuckle	Soil	Bulk Soil	4	1-I-BS
+JE.Soil.186	Arbuckle	IR50	Rhizosphere	4	1-I-1mm
+JE.Soil.187	Arbuckle	IR50	Rhizoplane	4	1-I-BF
+JE.Soil.188	Arbuckle	IR50	Endosphere	4	1-I-Endo
+JE.Soil.189	Arbuckle	Soil	Bulk Soil	4	1-9-BS
+JE.Soil.190	Arbuckle	93-11	Rhizosphere	4	1-9-1mm
+JE.Soil.191	Arbuckle	93-11	Rhizoplane	4	1-9-BF
+JE.Soil.192	Arbuckle	93-11	Endosphere	4	1-9-Endo
+JE.Soil.193	Arbuckle	Soil	Bulk Soil	4	1-E-BS
+JE.Soil.194	Arbuckle	Glab_E	Rhizosphere	4	1-E-1mm
+JE.Soil.195	Arbuckle	Glab_E	Rhizoplane	4	1-E-BF
+JE.Soil.196	Arbuckle	Glab_E	Endosphere	4	1-E-Endo
+JE.Soil.197	Arbuckle	Soil	Bulk Soil	4	1-B-BS
+JE.Soil.198	Arbuckle	Glab_B	Rhizosphere	4	1-B-1mm
+JE.Soil.199	Arbuckle	Glab_B	Rhizoplane	4	1-B-BF
+JE.Soil.200	Arbuckle	Glab_B	Endosphere	4	1-B-Endo
+JE.Soil.202	Arbuckle	Nipponebare	Rhizosphere	4	2-N-1mm
+JE.Soil.204	Arbuckle	Nipponebare	Endosphere	4	2-N-Endo
+JE.Soil.206	Arbuckle	M104	Rhizosphere	4	2-M-1mm
+JE.Soil.208	Arbuckle	M104	Endosphere	4	2-M-Endo
+JE.Soil.210	Arbuckle	IR50	Rhizosphere	4	2-I-1mm
+JE.Soil.211	Arbuckle	IR50	Rhizoplane	4	2-I-BF
+JE.Soil.212	Arbuckle	IR50	Endosphere	4	2-I-Endo
+JE.Soil.214	Arbuckle	93-11	Rhizosphere	4	2-9-1mm
+JE.Soil.215	Arbuckle	93-11	Rhizoplane	4	2-9-BF
+JE.Soil.216	Arbuckle	93-11	Endosphere	4	2-9-Endo
+JE.Soil.218	Arbuckle	Glab_E	Rhizosphere	4	2-E-1mm
+JE.Soil.219	Arbuckle	Glab_E	Rhizoplane	4	2-E-BF
+JE.Soil.220	Arbuckle	Glab_E	Endosphere	4	2-E-Endo
+JE.Soil.222	Arbuckle	Glab_B	Rhizosphere	4	2-B-1mm
+JE.Soil.223	Arbuckle	Glab_B	Rhizoplane	4	2-B-BF
+JE.Soil.224	Arbuckle	Glab_B	Endosphere	4	2-B-Endo
+JE.Soil.227	Davis	Nipponebare	Rhizoplane	4	6-N-BF
+JE.Soil.228	Davis	Nipponebare	Endosphere	4	6-N-Endo
+JE.Soil.229	Davis	Soil	Bulk Soil	4	6-M-BS
+JE.Soil.231	Davis	M104	Rhizoplane	4	6-M-BF
+JE.Soil.232	Davis	M104	Endosphere	4	6-M-Endo
+JE.Soil.233	Davis	Soil	Bulk Soil	4	6-I-BS
+JE.Soil.234	Davis	IR50	Rhizosphere	4	6-I-1mm
+JE.Soil.235	Davis	IR50	Rhizoplane	4	6-I-BF
+JE.Soil.236	Davis	IR50	Endosphere	4	6-I-Endo
+JE.Soil.239	Davis	93-11	Rhizoplane	4	6-9-BF
+JE.Soil.240	Davis	93-11	Endosphere	4	6-9-Endo
+JE.Soil.241	Davis	Soil	Bulk Soil	4	6-E-BS
+JE.Soil.244	Davis	Glab_E	Endosphere	4	6-E-Endo
+JE.Soil.248	Davis	Glab_B	Endosphere	4	6-B-Endo
+JE.Soil.249	Davis	Soil	Bulk Soil	4	8-N-BS
+JE.Soil.250	Davis	Nipponebare	Rhizosphere	4	8-N-1mm
+JE.Soil.252	Davis	Nipponebare	Endosphere	4	8-N-Endo
+JE.Soil.253	Davis	Soil	Bulk Soil	4	8-M-BS
+JE.Soil.254	Davis	M104	Rhizosphere	4	8-M-1mm
+JE.Soil.256	Davis	M104	Endosphere	4	8-M-Endo
+JE.Soil.257	Davis	Soil	Bulk Soil	4	8-I-BS
+JE.Soil.258	Davis	IR50	Rhizosphere	4	8-I-1mm
+JE.Soil.260	Davis	IR50	Endosphere	4	8-I-Endo
+JE.Soil.262	Davis	93-11	Rhizosphere	4	8-9-1mm
+JE.Soil.264	Davis	93-11	Endosphere	4	8-9-Endo
+JE.Soil.265	Davis	Soil	Bulk Soil	4	8-E-BS
+JE.Soil.266	Davis	Glab_E	Rhizosphere	4	8-E-1mm
+JE.Soil.268	Davis	Glab_E	Endosphere	4	8-E-Endo
+JE.Soil.269	Davis	Soil	Bulk Soil	4	8-B-BS
+JE.Soil.270	Davis	Glab_B	Rhizosphere	4	8-B-1mm
+JE.Soil.272	Davis	Glab_B	Endosphere	4	8-B-Endo
+JE.Soil.273	Sacramento	Soil	Bulk Soil	4	9-N-BS
+JE.Soil.274	Sacramento	Nipponebare	Rhizosphere	4	9-N-1mm
+JE.Soil.276	Sacramento	Nipponebare	Endosphere	4	9-N-Endo
+JE.Soil.278	Sacramento	M104	Rhizosphere	4	9-M-1mm
+JE.Soil.279	Sacramento	M104	Rhizoplane	4	9-M-BF
+JE.Soil.280	Sacramento	M104	Endosphere	4	9-M-Endo
+JE.Soil.281	Sacramento	Soil	Bulk Soil	4	9-I-BS
+JE.Soil.282	Sacramento	IR50	Rhizosphere	4	9-I-1mm
+JE.Soil.283	Sacramento	IR50	Rhizoplane	4	9-I-BF
+JE.Soil.284	Sacramento	IR50	Endosphere	4	9-I-Endo
+JE.Soil.285	Sacramento	Soil	Bulk Soil	4	9-9-BS
+JE.Soil.286	Sacramento	93-11	Rhizosphere	4	9-9-1mm
+JE.Soil.287	Sacramento	93-11	Rhizoplane	4	9-9-BF
+JE.Soil.288	Sacramento	93-11	Endosphere	4	9-9-Endo
+JE.Soil.290	Sacramento	Glab_E	Rhizosphere	4	9-E-1mm
+JE.Soil.291	Sacramento	Glab_E	Rhizoplane	4	9-E-BF
+JE.Soil.293	Sacramento	Soil	Bulk Soil	4	9-B-BS
+JE.Soil.294	Sacramento	Glab_B	Rhizosphere	4	9-B-1mm
+JE.Soil.295	Sacramento	Glab_B	Rhizoplane	4	9-B-BF
+JE.Soil.296	Sacramento	Glab_B	Endosphere	4	9-B-Endo
+JE.Soil.298	Sacramento	Nipponebare	Rhizosphere	4	11-N-1mm
+JE.Soil.300	Sacramento	Nipponebare	Endosphere	4	11-N-Endo
+JE.Soil.301	Sacramento	Soil	Bulk Soil	4	11-M-BS
+JE.Soil.302	Sacramento	M104	Rhizosphere	4	11-M-1mm
+JE.Soil.303	Sacramento	M104	Rhizoplane	4	11-M-BF
+JE.Soil.304	Sacramento	M104	Endosphere	4	11-M-Endo
+JE.Soil.307	Sacramento	IR50	Rhizoplane	4	11-I-BF
+JE.Soil.308	Sacramento	IR50	Endosphere	4	11-I-Endo
+JE.Soil.309	Sacramento	Soil	Bulk Soil	4	11-9-BS
+JE.Soil.310	Sacramento	93-11	Rhizosphere	4	11-9-1mm
+JE.Soil.312	Sacramento	93-11	Endosphere	4	11-9-Endo
+JE.Soil.314	Sacramento	Glab_E	Rhizosphere	4	11-E-1mm
+JE.Soil.315	Sacramento	Glab_E	Rhizoplane	4	11-E-BF
+JE.Soil.316	Sacramento	Glab_E	Endosphere	4	11-E-Endo
+JE.Soil.318	Sacramento	Glab_B	Rhizosphere	4	11-B-1mm
+JE.Soil.319	Sacramento	Glab_B	Rhizoplane	4	11-B-BF
+JE.Soil.320	Sacramento	Glab_B	Endosphere	4	11-B-Endo
