@@ -1,6 +1,6 @@
 seed: 3301
 kmerlen: 20
-num_replicates: 10
+num_replicates: 20
 population_size: 12
 recomb_per_gen: 1
 num_chroms: 1 # Chromosomes
