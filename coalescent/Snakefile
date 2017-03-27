@@ -462,3 +462,42 @@ rule combined_rho:
             for infn in input:
                  with open(infn) as infh:
                     ofh.write(infh.read())
+
+# def bench_input(wc):
+#     inputs = []
+#     if config.get('kwip', True):
+#         pathfmt = "data/{seed}/bench/kwip/{sketch_size}-{cov}-{var}-{metric}.tsv"
+#         for seed in SEEDS:
+#             for cov, scale in COV_VAR:
+#                 for sketch_size in config["kwip_sketch_sizes"]:
+#                     for metric in METRICS:
+#                         inputs.append(pathfmt.format(seed=seed, metric=metric,
+#                                                     sketch_size=sketch_size, cov=cov,
+#                                                     scale=scale))
+#     if config["mash"]:
+#         pathfmt = "data/{seed}/bench/mash/{sketch_size}-mash-{cov}-{var}.tsv"
+#         for seed in SEEDS:
+#             for cov, scale in COV_VAR:
+#                 for sketch_size in config["mash_sketch_sizes"]:
+#                     for ec in ['mash']:
+#                         inputs.append(pathfmt.format(seed=seed, sketch_size=sketch_size,
+#                                                      mashec=ec, cov=cov, scale=scale))
+#     return inputs
+# 
+# 
+# rule combined_bench:
+#     input:
+#         bench_input
+#     output:
+#         "data/stats/bench.tab"
+#     run:
+#         with open(output[0], "w") as ofh:
+#             for cov, var in COV_VAR:
+#                 for tool in ["mash", "kwip"]:
+#                     if tool == "mash":
+#                         ## UNFINSIHED
+# 
+#             for infn in input:
+#                  with open(infn) as infh:
+#                     next(infh)  # Skip header
+#                     s, _ = next(infh).split("\t")
