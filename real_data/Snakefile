@@ -77,12 +77,15 @@ rule hash:
         "data/log/counts/{project}-{run}.log"
     priority:
         10
+    benchmark:
+        "data/benchmarks/sketch/{project}-{run}.tsv"
     shell:
         "load-into-counting.py"
         "   -N {params.N}"
         "   -x {params.x}"
         "   -k {params.k}"
         "   -T {threads}"
+        "   -f"
         "   -b"
         "   -s tsv"
         "   {output}"
