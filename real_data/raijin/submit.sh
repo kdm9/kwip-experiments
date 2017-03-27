@@ -1,38 +1,21 @@
-#!/bin/bash
-mkdir -p clogs
-mkdir -p jobs
+logdir=raijin/log
+mkdir -p $logdir
 
-set -xe
+if [ -d ".kdmwrappers/.git" ]
+then
+    cd .kdmwrappers && git pull && cd ..
+else
+    git clone 'https://github.com/kdmurray91/snakemake-wrappers.git' .kdmwrappers
+fi
 
-HERE=$PWD
-#for cfg in sets/rice/*.json
-for cfg in sets/rice/0.json
-do
-	job=$(basename $cfg .json)
-	jobscript=jobs/${job}.job
-	cat >${jobscript} <<EOF
-#PBS -l ncpus=16
-#PBS -l walltime=24:00:00
-#PBS -P xe2
-#PBS -q normal
-#PBS -l other=gdata1
-#PBS -l mem=126GB
-#PBS -l wd
-#PBS -o ./clogs
-#PBS -e ./clogs
+QSUB="qsub -q {cluster.queue} -l ncpus={threads} -l jobfs={cluster.jobfs}"
+QSUB="$QSUB -l walltime={cluster.time} -l mem={cluster.mem}"
+QSUB="$QSUB -l wd -o $logdir -e $logdir -P xe2"
 
-source ~/.profile
-source /g/data1/xe2/.profile
-set -xe
-
-workdir=/short/xe2/kwip-experiments/realdata/runs/$job
-mkdir -p $workdir
-cd $workdir
-mkdir -p data
-mkdir -p logs
-ln -s /g/data1/xe2/datasets/3000-rice/sra/ data/sra
-
-snakemake -j 16 --configfile $HERE/$cfg --snakefile $HERE/Snakefile >logs/${job}.log 2>&1
-EOF
-	qsub $jobscript
-done
+snakemake                                \
+    -j 3000                              \
+    --cluster-config raijin/cluster.yaml \
+    --js raijin/jobscript.sh             \
+    --rerun-incomplete                   \
+    --keep-going                         \
+    --cluster "$QSUB" $@

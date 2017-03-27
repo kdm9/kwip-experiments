@@ -1,4 +1,4 @@
-HASH_SIZE = "5e9"
+HASH_SIZE = "1e9"
 METRICS = ['wip', 'ip']
 SETS = {}
 ALLRUNS = set()
@@ -32,12 +32,9 @@ rule sra:
         "data/sra/{project}/{run}.sra",
     log:
         "data/log/getrun/{project}-{run}.log"
-    params:
     shell:
-        "get-run.py"
-        "   -d data/sra/{wildcards.project}"
-        "   -s "
-        "   -i {wildcards.run}"
+        "wget -c -O {output}"
+        "   https://sra-download.ncbi.nlm.nih.gov/srapub/{wildcards.run}"
         " >{log} 2>&1"
 
 rule sicklereads:
@@ -75,7 +72,7 @@ rule hash:
         N='1',
         k='20',
     threads:
-        1
+        16
     log:
         "data/log/counts/{project}-{run}.log"
     priority:
@@ -104,6 +101,8 @@ rule kwip:
         metric=lambda w: '-U' if w.metric == 'ip' else '',
     log:
         "data/log/kwip/{set}-{metric}.log"
+    benchmark:
+        "data/benchmarks/kwip/{set}-{metric}.tsv"
     threads:
         16
     shell:

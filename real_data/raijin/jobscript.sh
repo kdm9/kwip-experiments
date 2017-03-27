@@ -1,7 +1,8 @@
 #!/bin/bash
 # properties = {properties}
 
-source $HOME/.profile
 source /g/data1/xe2/.profile
+
+module load sickle kwip snakemake sra-toolkit khmer
 
 {exec_job}
