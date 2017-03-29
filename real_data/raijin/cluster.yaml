@@ -12,12 +12,12 @@ sicklereads:
   time: '0:30:00'
 
 hash:
-  mem: 10G
-  time: '1:00:00'
+  mem: 31G
+  time: '0:30:00'
 
 kwip:
-  mem: 126G
-  time: '8:00:00'
+  mem: 63G
+  time: '6:00:00'
 
 kwip_stats:
   mem: 126G
