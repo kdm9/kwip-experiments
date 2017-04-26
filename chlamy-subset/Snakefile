@@ -114,7 +114,7 @@ rule subset:
         "   -s {params.seed}"
         "   {input}"
         "   {params.nread}"
-        ">{output}"
+        " > {output}"
 
 
 rule hash:
